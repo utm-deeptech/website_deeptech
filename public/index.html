@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UTM DeepTech — Underwater Robotics</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- Top navigation -->
+  <nav class="nav">
+    <div class="nav-logo">
+      <div class="nav-logo-icon">
+        <img src="images/deeptech_logo.png" alt="UTM DeepTech" />
+      </div>
+      <span class="nav-logo-text">UTM DeepTech</span>
+    </div>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#workshops">Workshops</a>
+      <a href="#inventory">Inventory</a>
+      <a href="#sponsors">Sponsors</a>
+    </div>
+    <div class="nav-right">
+      <span id="user-info" class="user-info hidden"></span>
+      <button id="login-btn" class="nav-login">Sign in</button>
+      <button id="logout-btn" class="nav-login hidden">Sign out</button>
+    </div>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero">
+    <div class="bubbles">
+      <span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <svg class="hero-waves" viewBox="0 0 1440 120" preserveAspectRatio="none">
+      <path class="wave wave-1" d="M0,60 C240,100 480,20 720,60 C960,100 1200,20 1440,60 L1440,120 L0,120 Z"></path>
+      <path class="wave wave-2" d="M0,80 C240,40 480,100 720,80 C960,60 1200,100 1440,80 L1440,120 L0,120 Z"></path>
+    </svg>
+
+    <div class="hero-content">
+      <div class="hero-badge">UTM Underwater Robotics Club</div>
+      <h1 class="hero-title">We build <span class="accent">autonomous</span><br />underwater vehicles.</h1>
+      <p class="hero-subtitle">
+        UTM DeepTech is a student-led club at Universiti Teknologi Malaysia building AUVs and ROVs for international competitions like the Singapore AUV Challenge.
+      </p>
+      <div class="hero-actions">
+        <a href="#about" class="btn-hero-primary">Learn more</a>
+        <a href="#inventory" class="btn-hero-outline">View inventory</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ABOUT ===== -->
+  <section id="about" class="about-section">
+    <div class="section-inner">
+      <div class="eyebrow">About us</div>
+      <h2 class="section-h2">Engineering for the deep.</h2>
+      <p class="section-lead">
+        We're a multidisciplinary team of students passionate about marine robotics. Our work spans mechanical design, embedded electronics, and software — all coming together to build vehicles that can think and move underwater.
+      </p>
+
+      <div class="dept-cards">
+        <div class="dept-card">
+          <div class="dept-icon dept-icon-prog">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+          </div>
+          <h3>Programming</h3>
+          <p>ROS2, computer vision, autonomy stacks, simulation, and the mission control software that makes the vehicle act on its own.</p>
+        </div>
+
+        <div class="dept-card">
+          <div class="dept-icon dept-icon-elec">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+            </svg>
+          </div>
+          <h3>Electronics</h3>
+          <p>Power systems, microcontrollers, sensor integration, motor drivers, and the wiring that keeps every subsystem alive underwater.</p>
+        </div>
+
+        <div class="dept-card">
+          <div class="dept-icon dept-icon-mech">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+          </div>
+          <h3>Mechanism</h3>
+          <p>Hull design, waterproofing, thruster mounting, frame fabrication, and CAD work that defines the vehicle's physical shape.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== STATS ===== -->
+  <section class="stats-bar">
+    <div class="stat-cell">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Departments</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num" id="stat-items">0</div>
+      <div class="stat-label">Items tracked</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num" id="stat-low">0</div>
+      <div class="stat-label">Low / out of stock</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num">SAUVC</div>
+      <div class="stat-label">Next competition</div>
+    </div>
+  </section>
+
+  <!-- ===== WORKSHOPS ===== -->
+  <section id="workshops" class="workshops-section">
+    <div class="section-inner">
+      <div class="eyebrow">What we do</div>
+      <h2 class="section-h2">Workshops & events.</h2>
+      <p class="section-lead">
+        We run hands-on workshops on campus to share what we've learned and bring more students into underwater robotics.
+      </p>
+
+      <div class="workshop-grid">
+        <div class="workshop-card">
+          <div class="workshop-tag tag-upcoming">Upcoming</div>
+          <h3>Learn mechanical design on Onshape</h3>
+          <p>Hands-on session covering the basics of 3D modeling, CAD workflows, and design practices for underwater vehicle components.</p>
+          <div class="workshop-meta">
+            <span>📅 TBA</span>
+            <span>📍 UTM, Skudai</span>
+          </div>
+        </div>
+
+        <div class="workshop-card">
+          <div class="workshop-tag tag-upcoming">Upcoming</div>
+          <h3>KiCAD and PCB design</h3>
+          <p>Introduction to designing circuit boards using KiCAD, covering schematic capture, PCB layout, and best practices for robotics applications.</p>
+          <div class="workshop-meta">
+            <span>📅 TBA</span>
+            <span>📍 UTM, Skudai</span>
+          </div>
+        </div>
+
+        <div class="workshop-card">
+          <div class="workshop-tag tag-upcoming">Upcoming</div>
+          <h3>Computer vision with YOLO</h3>
+          <p>Workshop on training and deploying YOLO models for real-time object detection in robotics applications.</p>
+          <div class="workshop-meta">
+            <span>📅 TBA</span>
+            <span>📍 UTM, Skudai</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== INVENTORY ===== -->
+  <section id="inventory" class="section">
+    <div class="section-inner">
+      <div class="eyebrow">Resources</div>
+      <h2 class="section-h2">Club inventory.</h2>
+      <p class="section-lead">
+        Everything we own, tracked by department. Members can log usage, losses, and new purchases in real time.
+      </p>
+
+      <div class="inventory-toolbar">
+        <div class="dept-tabs" id="dept-tabs">
+          <button class="dept-tab active" data-dept="all">All</button>
+          <button class="dept-tab" data-dept="programming">Programming</button>
+          <button class="dept-tab" data-dept="electronics">Electronics</button>
+          <button class="dept-tab" data-dept="mechanism">Mechanism</button>
+        </div>
+        <button id="add-item-btn" class="btn-primary hidden">+ Add item</button>
+      </div>
+
+      <div id="inventory-grid" class="inventory-grid">
+        <div class="loading">Loading inventory...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SPONSORS ===== -->
+  <section id="sponsors" class="sponsors-section">
+    <div class="section-inner">
+      <div class="eyebrow">Backed by</div>
+      <h2 class="section-h2">Our sponsors.</h2>
+      <p class="section-lead">
+        None of this would be possible without the partners who fund our parts, our travel, and our competitions. Thank you.
+      </p>
+
+      <div class="sponsor-grid">
+  <a href="https://www.onshape.com" target="_blank" class="sponsor-card">
+    <img src="images/onshape.png" alt="Onshape" />
+  </a>
+      </div>
+
+      <div class="sponsor-cta">
+        <p>Interested in sponsoring us? Reach out to <a href="mailto:utmdeeptech@gmail.com">utmdeeptech@gmail.com</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="nav-logo-icon">U</div>
+        <div>
+          <div class="footer-title">UTM DeepTech</div>
+          <div class="footer-sub">Underwater Robotics · Universiti Teknologi Malaysia</div>
+        </div>
+      </div>
+      <div class="footer-copy">© 2026 UTM DeepTech. Built by club members.</div>
+    </div>
+  </footer>
+
+  <!-- Modals -->
+  <div id="item-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3 id="modal-title">Add item</h3>
+      <label>Item name</label>
+      <input type="text" id="item-name" placeholder="e.g. BlueESC thruster" />
+
+      <label>Department</label>
+      <select id="item-dept">
+        <option value="programming">Programming</option>
+        <option value="electronics">Electronics</option>
+        <option value="mechanism">Mechanism</option>
+      </select>
+
+      <label>Category</label>
+      <input type="text" id="item-category" placeholder="e.g. Propulsion" />
+
+      <label>Quantity</label>
+      <input type="number" id="item-qty" min="0" value="0" />
+
+      <div class="modal-actions">
+        <button id="modal-cancel" class="btn-outline">Cancel</button>
+        <button id="modal-save" class="btn-primary">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="history-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Change history</h3>
+      <div id="history-item-name" class="history-item-name"></div>
+
+      <div id="log-entry-section" class="hidden">
+        <label>What happened?</label>
+        <select id="log-reason">
+          <option value="used">Used</option>
+          <option value="lost">Lost</option>
+          <option value="broken">Broken</option>
+          <option value="borrowed">Borrowed</option>
+          <option value="returned">Returned</option>
+          <option value="purchased">Purchased</option>
+          <option value="other">Other</option>
+        </select>
+
+        <label>Quantity change (use negative to subtract)</label>
+        <input type="number" id="log-qty-change" value="-1" />
+
+        <label>Note (optional)</label>
+        <input type="text" id="log-note" placeholder="e.g. Lost during pool test" />
+
+        <button id="log-save" class="btn-primary">Log change</button>
+      </div>
+
+      <h4 class="history-heading">Past changes</h4>
+      <div id="history-list" class="history-list"></div>
+
+      <div class="modal-actions">
+        <button id="history-close" class="btn-outline">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
