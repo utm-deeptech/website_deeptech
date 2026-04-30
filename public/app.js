@@ -37,6 +37,11 @@ const userInfo = document.getElementById("user-info");
 const addItemBtn = document.getElementById("add-item-btn");
 const inventoryGrid = document.getElementById("inventory-grid");
 const deptTabs = document.getElementById("dept-tabs");
+const navInventoryLink = document.getElementById("nav-inventory-link");
+const heroInventoryBtn = document.getElementById("hero-inventory-btn");
+const inventoryToolbar = document.querySelector(".inventory-toolbar");
+const statItemsCell = document.getElementById("stat-items-cell");
+const statLowCell = document.getElementById("stat-low-cell");
 
 const itemModal = document.getElementById("item-modal");
 const modalTitle = document.getElementById("modal-title");
@@ -69,13 +74,23 @@ loginBtn.addEventListener("click", async () => {
 
 logoutBtn.addEventListener("click", () => signOut(auth));
 
+function getFirstName(user) {
+  const name = user.displayName || user.email?.split("@")[0] || "";
+  return name.trim().split(/\s+/)[0];
+}
+
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     currentUser = user;
     loginBtn.classList.add("hidden");
     logoutBtn.classList.remove("hidden");
-    userInfo.textContent = user.displayName || user.email;
+    userInfo.textContent = getFirstName(user);
     userInfo.classList.remove("hidden");
+    navInventoryLink.classList.remove("hidden");
+    heroInventoryBtn.classList.remove("hidden");
+    statItemsCell.classList.remove("hidden");
+    statLowCell.classList.remove("hidden");
+    exportBtn.classList.remove("hidden");
 
     await loadUserRole(user);
 
@@ -90,6 +105,11 @@ onAuthStateChanged(auth, async (user) => {
     logoutBtn.classList.add("hidden");
     userInfo.classList.add("hidden");
     addItemBtn.classList.add("hidden");
+    navInventoryLink.classList.add("hidden");
+    heroInventoryBtn.classList.add("hidden");
+    statItemsCell.classList.add("hidden");
+    statLowCell.classList.add("hidden");
+    exportBtn.classList.add("hidden");
   }
   renderInventory();
 });
@@ -138,6 +158,23 @@ function updateStats() {
 }
 
 function renderInventory() {
+  if (!currentUser) {
+    inventoryToolbar.classList.add("hidden");
+    inventoryGrid.innerHTML = `
+      <div class="inv-locked">
+        <svg class="inv-locked-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+        <h3>Members only</h3>
+        <p>Sign in to view the club inventory.</p>
+        <button class="btn-primary" onclick="document.getElementById('login-btn').click()">Sign in with Google</button>
+      </div>
+    `;
+    return;
+  }
+  inventoryToolbar.classList.remove("hidden");
+
   const filtered = currentFilter === "all"
     ? allItems
     : allItems.filter(i => i.department === currentFilter);
@@ -339,6 +376,68 @@ async function addLog(itemId, { reason, qtyChange, note }) {
 }
 
 historyClose.addEventListener("click", () => historyModal.classList.add("hidden"));
+
+// ===== Export inventory =====
+const exportBtn = document.getElementById("export-inventory-btn");
+exportBtn.addEventListener("click", exportInventory);
+
+function arrayToCSV(items) {
+  if (!items || items.length === 0) return '';
+  const headers = [...new Set(items.flatMap(item => Object.keys(item)))];
+  const escape = (val) => {
+    if (val === null || val === undefined) return '';
+    const str = String(val);
+    return str.includes(',') || str.includes('"') || str.includes('\n')
+      ? `"${str.replace(/"/g, '""')}"` : str;
+  };
+  return [headers.join(','), ...items.map(item => headers.map(h => escape(item[h])).join(','))].join('\n');
+}
+
+function downloadCSV(csvContent, filename) {
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+async function exportInventory() {
+  if (!currentUser) return;
+  exportBtn.disabled = true;
+  exportBtn.textContent = '⏳ Exporting...';
+  try {
+    if (allItems.length === 0) {
+      alert('No inventory items to export.');
+      return;
+    }
+    const csv = arrayToCSV(allItems);
+    const date = new Date().toISOString().split('T')[0];
+    downloadCSV(csv, `deeptech-inventory-${date}.csv`);
+  } catch (err) {
+    alert('Export failed: ' + err.message);
+  } finally {
+    exportBtn.disabled = false;
+    exportBtn.textContent = '⬇ Export as CSV';
+  }
+}
+
+// ===== Active nav link on scroll =====
+const allSections = document.querySelectorAll('section[id]');
+const allNavLinks = document.querySelectorAll('.nav-links a');
+const sectionObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      allNavLinks.forEach(link => {
+        link.classList.toggle('active', link.getAttribute('href') === '#' + entry.target.id);
+      });
+    }
+  });
+}, { rootMargin: '-30% 0px -60% 0px' });
+allSections.forEach(s => sectionObserver.observe(s));
 
 // ===== Helpers =====
 function escapeHtml(str) {

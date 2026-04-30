@@ -4,22 +4,20 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>UTM DeepTech — Underwater Robotics</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
   <!-- Top navigation -->
   <nav class="nav">
-    <div class="nav-logo">
-      <div class="nav-logo-icon">
-        <img src="images/deeptech_logo.png" alt="UTM DeepTech" />
-      </div>
-      <span class="nav-logo-text">UTM DeepTech</span>
-    </div>
+    <a href="/" class="brand">
+      <img src="assets/logo-deeptech.svg" alt="DeepTech Underwater Robotics" class="nav-logo">
+    </a>
     <div class="nav-links">
       <a href="#about">About</a>
       <a href="#workshops">Workshops</a>
-      <a href="#inventory">Inventory</a>
+      <a id="nav-inventory-link" href="#inventory" class="hidden">Inventory</a>
       <a href="#sponsors">Sponsors</a>
     </div>
     <div class="nav-right">
@@ -34,22 +32,43 @@
     <div class="bubbles">
       <span></span><span></span><span></span><span></span><span></span>
       <span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span>
     </div>
+    <div class="hero-grid"></div>
 
     <svg class="hero-waves" viewBox="0 0 1440 120" preserveAspectRatio="none">
       <path class="wave wave-1" d="M0,60 C240,100 480,20 720,60 C960,100 1200,20 1440,60 L1440,120 L0,120 Z"></path>
       <path class="wave wave-2" d="M0,80 C240,40 480,100 720,80 C960,60 1200,100 1440,80 L1440,120 L0,120 Z"></path>
     </svg>
 
-    <div class="hero-content">
-      <div class="hero-badge">UTM Underwater Robotics Club</div>
-      <h1 class="hero-title">We build <span class="accent">autonomous</span><br />underwater vehicles.</h1>
-      <p class="hero-subtitle">
-        UTM DeepTech is a student-led club at Universiti Teknologi Malaysia building AUVs and ROVs for international competitions like the Singapore AUV Challenge.
-      </p>
-      <div class="hero-actions">
-        <a href="#about" class="btn-hero-primary">Learn more</a>
-        <a href="#inventory" class="btn-hero-outline">View inventory</a>
+    <div class="hero-inner">
+      <div class="hero-content">
+        <div class="hero-badge">UTM Underwater Robotics Club</div>
+        <h1 class="hero-title">We build <span class="accent">autonomous</span><br />underwater vehicles.</h1>
+        <p class="hero-subtitle">
+          UTM DeepTech is a student-led club at Universiti Teknologi Malaysia building AUVs and ROVs for international competitions like the Singapore AUV Challenge.
+        </p>
+        <div class="hero-actions">
+          <a href="#about" class="btn-hero-primary">Join the Club</a>
+          <a id="hero-inventory-btn" href="#inventory" class="btn-hero-outline hidden">View Inventory</a>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="hero-photos">
+          <div class="photo-main">
+            <img src="images/image_001.jpeg" alt="DeepTech team at work" />
+          </div>
+          <div class="photo-stack">
+            <div class="photo-small">
+              <img src="images/image_002.jpeg" alt="DeepTech team" />
+            </div>
+            <div class="photo-small">
+              <img src="images/image_003.jpeg" alt="DeepTech team" />
+            </div>
+          </div>
+        </div>
+        <p class="hero-photos-caption">📸 From our activities</p>
       </div>
     </div>
   </section>
@@ -105,17 +124,33 @@
       <div class="stat-num">3</div>
       <div class="stat-label">Departments</div>
     </div>
-    <div class="stat-cell">
+    <div id="stat-items-cell" class="stat-cell hidden">
       <div class="stat-num" id="stat-items">0</div>
       <div class="stat-label">Items tracked</div>
     </div>
-    <div class="stat-cell">
+    <div id="stat-low-cell" class="stat-cell hidden">
       <div class="stat-num" id="stat-low">0</div>
       <div class="stat-label">Low / out of stock</div>
     </div>
     <div class="stat-cell">
       <div class="stat-num">SAUVC</div>
       <div class="stat-label">Next competition</div>
+    </div>
+  </section>
+
+  <!-- ===== AUV PLATFORM ===== -->
+  <section id="platform" class="platform-section">
+    <div class="section-inner">
+      <div class="eyebrow">Our Vehicles</div>
+      <h2 class="section-h2">AUV Platform.</h2>
+      <p class="section-lead">
+        Designed and built entirely by our members for autonomous underwater navigation, vision-based task completion, and international competition missions.
+      </p>
+      <div class="platform-video-wrap">
+        <video class="platform-video" controls>
+          <source src="assets/ROV_V2%20-%20Render%20(3)_Motion%20Study.mp4" type="video/mp4">
+        </video>
+      </div>
     </div>
   </section>
 
@@ -178,6 +213,7 @@
           <button class="dept-tab" data-dept="electronics">Electronics</button>
           <button class="dept-tab" data-dept="mechanism">Mechanism</button>
         </div>
+        <button id="export-inventory-btn" class="export-btn hidden">⬇ Export as CSV</button>
         <button id="add-item-btn" class="btn-primary hidden">+ Add item</button>
       </div>
 
@@ -193,7 +229,7 @@
       <div class="eyebrow">Backed by</div>
       <h2 class="section-h2">Our sponsors.</h2>
       <p class="section-lead">
-        None of this would be possible without the partners who fund our parts, our travel, and our competitions. Thank you.
+        We're actively looking for sponsors to help us build, compete, and grow. If your organisation believes in student-led engineering, we'd love to hear from you.
       </p>
 
       <div class="sponsor-grid">
@@ -203,7 +239,7 @@
       </div>
 
       <div class="sponsor-cta">
-        <p>Interested in sponsoring us? Reach out to <a href="mailto:utmdeeptech@gmail.com">utmdeeptech@gmail.com</a></p>
+        <p>Drop us a line at <a href="mailto:utmdeeptech@gmail.com">utmdeeptech@gmail.com</a></p>
       </div>
     </div>
   </section>
@@ -212,11 +248,7 @@
   <footer class="footer">
     <div class="footer-inner">
       <div class="footer-brand">
-        <div class="nav-logo-icon">U</div>
-        <div>
-          <div class="footer-title">UTM DeepTech</div>
-          <div class="footer-sub">Underwater Robotics · Universiti Teknologi Malaysia</div>
-        </div>
+        <img src="assets/logo-deeptech.svg" alt="DeepTech Underwater Robotics" class="footer-logo">
       </div>
       <div class="footer-copy">© 2026 UTM DeepTech. Built by club members.</div>
     </div>

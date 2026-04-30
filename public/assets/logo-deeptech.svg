@@ -1,0 +1,44 @@
+<svg width="550" height="180" viewBox="0 0 550 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- D -->
+  <path d="M 40 50 L 40 130 L 80 130 Q 110 130, 110 90 Q 110 50, 80 50 Z M 55 65 L 80 65 Q 95 65, 95 90 Q 95 115, 80 115 L 55 115 Z" fill="#0A4D8C"/>
+  <!-- E -->
+  <rect x="125" y="50" width="15" height="80" fill="#0A4D8C"/>
+  <rect x="125" y="50" width="50" height="15" fill="#0A4D8C"/>
+  <rect x="125" y="82" width="45" height="15" fill="#0A4D8C"/>
+  <rect x="125" y="115" width="50" height="15" fill="#0A4D8C"/>
+  <!-- E with porthole -->
+  <rect x="190" y="50" width="15" height="80" fill="#0A4D8C"/>
+  <rect x="190" y="50" width="50" height="15" fill="#0A4D8C"/>
+  <rect x="190" y="82" width="45" height="15" fill="#0A4D8C"/>
+  <rect x="190" y="115" width="50" height="15" fill="#0A4D8C"/>
+  <circle cx="217" cy="90" r="12" fill="white"/>
+  <circle cx="217" cy="90" r="8" fill="#60A5FA" opacity="0.3"/>
+  <!-- P -->
+  <rect x="255" y="50" width="15" height="80" fill="#0A4D8C"/>
+  <path d="M 255 50 L 295 50 Q 310 50, 310 72 Q 310 95, 295 95 L 270 95 L 270 50" fill="#0A4D8C"/>
+  <path d="M 270 65 L 290 65 Q 295 65, 295 80 Q 295 95, 290 95 L 270 95 Z" fill="white"/>
+  <!-- T -->
+  <rect x="310" y="75" width="60" height="15" fill="#3B82F6"/>
+  <rect x="332" y="75" width="15" height="80" fill="#3B82F6"/>
+  <!-- E sliced -->
+  <polygon points="375,75 435,75 432,90 378,90" fill="#3B82F6"/>
+  <rect x="375" y="75" width="15" height="80" fill="#3B82F6"/>
+  <polygon points="375,97 425,97 422,112 378,112" fill="#3B82F6"/>
+  <polygon points="375,140 435,140 432,155 378,155" fill="#3B82F6"/>
+  <!-- C -->
+  <path d="M 495 115 Q 495 75, 455 75 L 455 90 Q 480 90, 480 115 Q 480 140, 455 140 L 455 155 Q 495 155, 495 115" fill="#3B82F6"/>
+  <rect x="485" y="110" width="15" height="10" fill="white"/>
+  <!-- H -->
+  <rect x="505" y="75" width="15" height="80" fill="#3B82F6"/>
+  <rect x="530" y="75" width="15" height="80" fill="#3B82F6"/>
+  <rect x="505" y="110" width="40" height="15" fill="#3B82F6"/>
+  <!-- Water line -->
+  <rect x="0" y="95" width="550" height="3" fill="#60A5FA" opacity="0.4">
+    <animate attributeName="y" values="95;100;95" dur="4s" repeatCount="indefinite"/>
+  </rect>
+  <!-- Bubble -->
+  <circle cx="220" cy="140" r="5" fill="none" stroke="#60A5FA" stroke-width="2">
+    <animate attributeName="cy" values="140;40" dur="3s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="1;0" dur="3s" repeatCount="indefinite"/>
+  </circle>
+</svg>
