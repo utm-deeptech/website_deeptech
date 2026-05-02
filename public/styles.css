@@ -430,6 +430,67 @@ body {
   line-height: 1.6;
 }
 
+/* ===== Vision & Mission ===== */
+.vm-section {
+  padding: 72px 28px;
+  background: linear-gradient(180deg, #eef4fb 0%, #e4eef8 100%);
+}
+.vm-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.vm-card {
+  background: white;
+  border: 1px solid #d6e6f5;
+  border-radius: 16px;
+  padding: 36px 40px;
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+.vm-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, #185FA5, #378ADD);
+  border-radius: 16px 0 0 16px;
+}
+.vm-card:hover {
+  box-shadow: 0 12px 36px rgba(4, 44, 83, 0.1);
+  transform: translateY(-3px);
+}
+.vm-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  background: rgba(24, 95, 165, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  color: #185FA5;
+}
+.vm-icon svg { width: 30px; height: 30px; }
+.vm-label {
+  font-size: 20px;
+  font-weight: 700;
+  color: #042C53;
+  letter-spacing: 0;
+  text-transform: none;
+  margin-bottom: 14px;
+}
+.vm-text {
+  font-size: 15.5px;
+  color: #3a4a5c;
+  line-height: 1.7;
+}
+@media (max-width: 640px) {
+  .vm-grid { grid-template-columns: 1fr; }
+}
+
 /* ===== Stats ===== */
 .stats-bar {
   display: flex;
@@ -475,6 +536,128 @@ body {
   display: block;
   max-height: 520px;
   background: #021a33;
+}
+
+/* ===== SAUVC Competition ===== */
+.competition-section {
+  padding: 88px 28px;
+  background: linear-gradient(135deg, #021a33 0%, #042C53 55%, #0C447C 100%);
+}
+.competition-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+}
+.competition-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #6db7ff;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+.competition-eyebrow::before {
+  content: '';
+  width: 24px;
+  height: 2px;
+  background: #6db7ff;
+  border-radius: 2px;
+}
+.competition-heading-row {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  margin-bottom: 24px;
+}
+.competition-heading-row .competition-h2 {
+  margin-bottom: 0;
+}
+.competition-logo {
+  height: 80px;
+  width: auto;
+  flex-shrink: 0;
+}
+.competition-h2 {
+  font-size: 42px;
+  font-weight: 700;
+  color: #E6F1FB;
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+  margin-bottom: 24px;
+}
+.competition-desc {
+  font-size: 16px;
+  color: #B5D4F4;
+  line-height: 1.75;
+  margin-bottom: 16px;
+}
+.competition-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14.5px;
+  padding: 10px 22px;
+  border: 1.5px solid rgba(109, 183, 255, 0.5);
+  border-radius: 8px;
+  background: rgba(55, 138, 221, 0.12);
+  transition: all 0.2s ease;
+}
+.competition-link:hover {
+  background: rgba(55, 138, 221, 0.25);
+  border-color: #85B7EB;
+}
+.competition-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.comp-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(133, 183, 235, 0.18);
+  border-radius: 14px;
+  padding: 22px 24px;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.comp-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(133, 183, 235, 0.35);
+}
+.comp-card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(55, 138, 221, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6db7ff;
+  flex-shrink: 0;
+}
+.comp-card-label {
+  font-size: 15px;
+  font-weight: 700;
+  color: #E6F1FB;
+  margin-bottom: 4px;
+}
+.comp-card-sub {
+  font-size: 13.5px;
+  color: #85B7EB;
+  line-height: 1.5;
+}
+@media (max-width: 768px) {
+  .competition-inner { grid-template-columns: 1fr; gap: 40px; }
+  .competition-h2 { font-size: 32px; }
 }
 
 /* ===== Workshops ===== */
@@ -604,6 +787,140 @@ body {
   cursor: not-allowed;
 }
 
+/* Import guide modal */
+.import-guide-content {
+  max-width: 620px;
+  width: 90vw;
+}
+.import-guide-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.import-guide-icon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  background: #EBF3FD;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #185FA5;
+}
+.import-guide-icon svg {
+  width: 22px;
+  height: 22px;
+}
+.import-guide-header h3 {
+  margin: 0 0 4px;
+}
+.import-guide-sub {
+  margin: 0;
+  font-size: 13px;
+  color: #64748b;
+}
+.import-guide-columns {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  font-size: 13px;
+}
+.import-col-row {
+  display: grid;
+  grid-template-columns: 130px 70px 80px 1fr;
+  gap: 0;
+  padding: 10px 14px;
+  border-bottom: 1px solid #e2e8f0;
+  align-items: center;
+}
+.import-col-row:last-child { border-bottom: none; }
+.import-col-header-row {
+  background: #f8fafc;
+  font-weight: 600;
+  color: #042C53;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.import-col-name {
+  font-family: monospace;
+  font-size: 13px;
+  color: #185FA5;
+  font-weight: 600;
+}
+.import-col-type { color: #64748b; }
+.import-col-req--yes {
+  display: inline-block;
+  background: #dcfce7;
+  color: #15803d;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  width: fit-content;
+}
+.import-col-note { color: #64748b; }
+.import-guide-sample-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  margin-bottom: 8px;
+}
+.import-guide-note {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 14px;
+  margin-bottom: 0;
+}
+
+/* Import preview modal */
+.import-modal-content {
+  max-width: 800px;
+  width: 90vw;
+}
+.import-info {
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 14px;
+}
+.import-table-wrap {
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 300px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+}
+.import-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.import-table th,
+.import-table td {
+  border: 1px solid #e2e8f0;
+  padding: 6px 12px;
+  text-align: left;
+  white-space: nowrap;
+}
+.import-table thead th {
+  background: #f1f5f9;
+  font-weight: 600;
+  color: #042C53;
+  position: sticky;
+  top: 0;
+}
+.import-count {
+  font-size: 13px;
+  color: #64748b;
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+
 .btn-outline {
   padding: 9px 20px;
   font-size: 13px;
@@ -708,6 +1025,17 @@ body {
 }
 .inv-qty span { font-weight: 600; color: #1a1a1a; }
 
+.inv-editor {
+  font-size: 11px;
+  color: #6a737d;
+  margin-top: 8px;
+  line-height: 1.35;
+}
+.inv-editor span {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
 .inv-actions {
   display: flex;
   gap: 6px;
@@ -803,6 +1131,37 @@ body {
   width: auto;
   display: block;
   filter: brightness(0) invert(1);
+}
+.footer-social {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.footer-social-label {
+  font-size: 12px;
+  color: #85B7EB;
+  font-weight: 500;
+}
+.social-link {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(181, 212, 244, 0.32);
+  border-radius: 8px;
+  color: #B5D4F4;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+.social-link:hover {
+  background: #185FA5;
+  border-color: #378ADD;
+  color: white;
+}
+.social-link svg {
+  width: 17px;
+  height: 17px;
+  fill: currentColor;
 }
 .footer-title { font-size: 14px; font-weight: 600; color: #E6F1FB; }
 .footer-sub { font-size: 12px; color: #85B7EB; }

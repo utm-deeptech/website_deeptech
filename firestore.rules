@@ -24,6 +24,22 @@ service cloud.firestore {
       return isSignedIn() && getUserRole() == 'lead' && getUserDept() == dept;
     }
 
+    function recordsCreator() {
+      return isSignedIn()
+             && request.resource.data.createdByUid == request.auth.uid
+             && request.resource.data.updatedByUid == request.auth.uid;
+    }
+
+    function recordsEditor() {
+      return isSignedIn()
+             && request.resource.data.updatedByUid == request.auth.uid;
+    }
+
+    function recordsLogUser() {
+      return isSignedIn()
+             && request.resource.data.userUid == request.auth.uid;
+    }
+
     // Users collection
     // - Anyone signed in can read user docs (needed to check own role)
     // - Users can create their own doc on first sign-in (defaults to member)
@@ -42,10 +58,12 @@ service cloud.firestore {
     // - Leads can only modify items in their own department
     match /items/{itemId} {
       allow read: if true;
-      allow create: if isAdmin()
-                    || isLeadOf(request.resource.data.department);
-      allow update: if isAdmin()
-                    || isLeadOf(resource.data.department);
+      allow create: if (isAdmin()
+                    || isLeadOf(request.resource.data.department))
+                    && recordsCreator();
+      allow update: if (isAdmin()
+                    || isLeadOf(resource.data.department))
+                    && recordsEditor();
       allow delete: if isAdmin()
                     || isLeadOf(resource.data.department);
 
@@ -55,8 +73,9 @@ service cloud.firestore {
       // - Logs cannot be edited or deleted (audit trail)
       match /logs/{logId} {
         allow read: if isSignedIn();
-        allow create: if isAdmin()
-                      || isLeadOf(get(/databases/$(database)/documents/items/$(itemId)).data.department);
+        allow create: if (isAdmin()
+                      || isLeadOf(get(/databases/$(database)/documents/items/$(itemId)).data.department))
+                      && recordsLogUser();
         allow update, delete: if false;
       }
     }

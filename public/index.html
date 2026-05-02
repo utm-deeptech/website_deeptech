@@ -68,7 +68,7 @@
             </div>
           </div>
         </div>
-        <p class="hero-photos-caption">📸 From our activities</p>
+        <p class="hero-photos-caption"> From our activities</p>
       </div>
     </div>
   </section>
@@ -118,6 +118,38 @@
     </div>
   </section>
 
+  <!-- ===== VISION & MISSION ===== -->
+  <section class="vm-section">
+    <div class="section-inner">
+      <div class="vm-grid">
+
+        <div class="vm-card">
+          <div class="vm-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M2 12C2 12 5 5 12 5s10 7 10 7-3 7-10 7S2 12 2 12z"></path>
+            </svg>
+          </div>
+          <div class="vm-label">Vision</div>
+          <p class="vm-text">To position UTM at the national forefront of marine robotics — advancing autonomous underwater vehicle technology and developing innovative engineers who tackle real-world challenges in underwater exploration.</p>
+        </div>
+
+        <div class="vm-card">
+          <div class="vm-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="12" cy="12" r="10"></circle>
+              <circle cx="12" cy="12" r="6"></circle>
+              <circle cx="12" cy="12" r="2"></circle>
+            </svg>
+          </div>
+          <div class="vm-label">Mission</div>
+          <p class="vm-text">To empower UTM students through competitive excellence in marine robotics — fostering innovation, building future leaders, and bridging the gap between academic research and real-world engineering.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
   <!-- ===== STATS ===== -->
   <section class="stats-bar">
     <div class="stat-cell">
@@ -150,6 +182,57 @@
         <video class="platform-video" controls>
           <source src="assets/ROV_V2%20-%20Render%20(3)_Motion%20Study.mp4" type="video/mp4">
         </video>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SAUVC ===== -->
+  <section class="competition-section">
+    <div class="section-inner">
+      <div class="competition-inner">
+
+        <div class="competition-text">
+          <div class="competition-eyebrow">Target Competition</div>
+          <div class="competition-heading-row">
+            <h2 class="competition-h2">Singapore AUV<br/>Challenge.</h2>
+            <img src="images/logo_notext.png" alt="SAUVC Logo" class="competition-logo" />
+          </div>
+          <p class="competition-desc">
+            SAUVC is one of Asia's most prestigious autonomous underwater vehicle competitions, held annually in Singapore. Teams from universities across the globe design and build AUVs capable of completing complex missions — fully autonomously, no human control allowed.
+          </p>
+          <p class="competition-desc">
+            Competing at SAUVC is our north star. It's where we test everything we've built — the code, the hardware, the teamwork — against the best student engineers in the region.
+          </p>
+          <a href="https://sauvc.org/" target="_blank" rel="noopener" class="competition-link">
+            Learn about SAUVC
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M4 10h12M10 4l6 6-6 6"/></svg>
+          </a>
+        </div>
+
+        <div class="competition-cards">
+          <div class="comp-card">
+            <div class="comp-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="24" height="24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            </div>
+            <div class="comp-card-label">International</div>
+            <div class="comp-card-sub">Universities competing from across Asia and beyond</div>
+          </div>
+          <div class="comp-card">
+            <div class="comp-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="24" height="24"><rect x="2" y="3" width="20" height="14" rx="2"/><polyline points="8 21 12 17 16 21"/></svg>
+            </div>
+            <div class="comp-card-label">Fully Autonomous</div>
+            <div class="comp-card-sub">Zero human input during underwater missions</div>
+          </div>
+          <div class="comp-card">
+            <div class="comp-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="24" height="24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div class="comp-card-label">Singapore</div>
+            <div class="comp-card-sub">Held annually at a world-class aquatic facility</div>
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
@@ -214,6 +297,8 @@
           <button class="dept-tab" data-dept="mechanism">Mechanism</button>
         </div>
         <button id="export-inventory-btn" class="export-btn hidden">⬇ Export as CSV</button>
+        <input type="file" id="import-file-input" accept=".xlsx,.xls,.csv" style="display:none">
+        <button id="import-inventory-btn" class="export-btn hidden">⬆ Import from Excel</button>
         <button id="add-item-btn" class="btn-primary hidden">+ Add item</button>
       </div>
 
@@ -249,6 +334,24 @@
     <div class="footer-inner">
       <div class="footer-brand">
         <img src="assets/logo-deeptech.svg" alt="DeepTech Underwater Robotics" class="footer-logo">
+      </div>
+      <div class="footer-social">
+        <span class="footer-social-label">Follow us</span>
+        <a href="https://www.linkedin.com/company/utm-deeptech/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="UTM DeepTech on LinkedIn">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.47-.9 1.64-1.85 3.37-1.85 3.61 0 4.27 2.38 4.27 5.47v6.27zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"></path>
+          </svg>
+        </a>
+        <a href="https://www.instagram.com/__deeptech__?igsh=MTVjNTZybXpuenJ3Mg==" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="UTM DeepTech on Instagram">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7.75 2h8.5A5.76 5.76 0 0 1 22 7.75v8.5A5.76 5.76 0 0 1 16.25 22h-8.5A5.76 5.76 0 0 1 2 16.25v-8.5A5.76 5.76 0 0 1 7.75 2zm0 2A3.75 3.75 0 0 0 4 7.75v8.5A3.75 3.75 0 0 0 7.75 20h8.5A3.75 3.75 0 0 0 20 16.25v-8.5A3.75 3.75 0 0 0 16.25 4h-8.5zM12 7.25A4.75 4.75 0 1 1 12 16.75 4.75 4.75 0 0 1 12 7.25zm0 2A2.75 2.75 0 1 0 12 14.75 2.75 2.75 0 0 0 12 9.25zm5-2.5a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5z"></path>
+          </svg>
+        </a>
+        <a href="https://github.com/utm-deeptech" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="UTM DeepTech on GitHub">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.09 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2.18c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.08-.12-.29-.52-1.46.11-3.04 0 0 .97-.31 3.17 1.18A11.05 11.05 0 0 1 12 6c.98 0 1.95.13 2.87.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.23 2.75.11 3.04.74.8 1.19 1.82 1.19 3.08 0 4.41-2.69 5.38-5.25 5.67.42.36.78 1.06.78 2.14v3.21c0 .31.21.67.79.56A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"></path>
+          </svg>
+        </a>
       </div>
       <div class="footer-copy">© 2026 UTM DeepTech. Built by club members.</div>
     </div>
@@ -316,6 +419,83 @@
     </div>
   </div>
 
+  <!-- Import format guide modal -->
+  <div id="import-guide-modal" class="modal hidden">
+    <div class="modal-content import-guide-content">
+      <div class="import-guide-header">
+        <div class="import-guide-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+        </div>
+        <div>
+          <h3>Import from Excel / CSV</h3>
+          <p class="import-guide-sub">Make sure your file matches the format below before uploading.</p>
+        </div>
+      </div>
+
+      <div class="import-guide-columns">
+        <div class="import-col-row import-col-header-row">
+          <span>Column name</span><span>Type</span><span>Required</span><span>Notes</span>
+        </div>
+        <div class="import-col-row">
+          <span class="import-col-name">name</span>
+          <span class="import-col-type">Text</span>
+          <span class="import-col-req import-col-req--yes">Yes</span>
+          <span class="import-col-note">Item name, e.g. "BlueESC Thruster"</span>
+        </div>
+        <div class="import-col-row">
+          <span class="import-col-name">department</span>
+          <span class="import-col-type">Text</span>
+          <span class="import-col-req import-col-req--yes">Yes</span>
+          <span class="import-col-note">programming · electronics · mechanism</span>
+        </div>
+        <div class="import-col-row">
+          <span class="import-col-name">category</span>
+          <span class="import-col-type">Text</span>
+          <span class="import-col-req import-col-req--yes">Yes</span>
+          <span class="import-col-note">e.g. "Propulsion", "Sensors"</span>
+        </div>
+        <div class="import-col-row">
+          <span class="import-col-name">quantity</span>
+          <span class="import-col-type">Number</span>
+          <span class="import-col-req import-col-req--yes">Yes</span>
+          <span class="import-col-note">Whole number, e.g. 3</span>
+        </div>
+      </div>
+
+      <div class="import-guide-sample-label">Sample row</div>
+      <div class="import-table-wrap">
+        <table class="import-table">
+          <thead><tr><th>name</th><th>department</th><th>category</th><th>quantity</th></tr></thead>
+          <tbody><tr><td>BlueESC Thruster</td><td>mechanism</td><td>Propulsion</td><td>4</td></tr></tbody>
+        </table>
+      </div>
+
+      <p class="import-guide-note">Column names are case-insensitive. Extra columns are ignored. Accepted formats: <strong>.xlsx</strong>, <strong>.xls</strong>, <strong>.csv</strong></p>
+
+      <div class="modal-actions">
+        <button id="import-guide-cancel" class="btn-outline">Cancel</button>
+        <button id="import-guide-choose" class="btn-primary">Choose File</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Import preview modal -->
+  <div id="import-modal" class="modal hidden">
+    <div class="modal-content import-modal-content">
+      <h3>Import Inventory from Excel</h3>
+      <p class="import-info">Preview of items to be imported. Required columns: <strong>name</strong>, <strong>department</strong>, <strong>category</strong>, <strong>quantity</strong>.</p>
+      <div class="import-table-wrap">
+        <table id="import-preview-table" class="import-table"></table>
+      </div>
+      <p id="import-count" class="import-count"></p>
+      <div class="modal-actions">
+        <button id="import-cancel-btn" class="btn-outline">Cancel</button>
+        <button id="import-confirm-btn" class="btn-primary">Import All</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script type="module" src="app.js"></script>
 </body>
 </html>

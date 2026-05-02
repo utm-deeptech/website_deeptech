@@ -43,6 +43,11 @@ const inventoryToolbar = document.querySelector(".inventory-toolbar");
 const statItemsCell = document.getElementById("stat-items-cell");
 const statLowCell = document.getElementById("stat-low-cell");
 
+const importBtn = document.getElementById("import-inventory-btn");
+const importFileInput = document.getElementById("import-file-input");
+const importModal = document.getElementById("import-modal");
+const importGuideModal = document.getElementById("import-guide-modal");
+
 const itemModal = document.getElementById("item-modal");
 const modalTitle = document.getElementById("modal-title");
 const itemNameInput = document.getElementById("item-name");
@@ -96,6 +101,7 @@ onAuthStateChanged(auth, async (user) => {
 
     if (currentRole === "admin" || currentRole === "lead") {
       addItemBtn.classList.remove("hidden");
+      importBtn.classList.remove("hidden");
     }
   } else {
     currentUser = null;
@@ -105,6 +111,7 @@ onAuthStateChanged(auth, async (user) => {
     logoutBtn.classList.add("hidden");
     userInfo.classList.add("hidden");
     addItemBtn.classList.add("hidden");
+    importBtn.classList.add("hidden");
     navInventoryLink.classList.add("hidden");
     heroInventoryBtn.classList.add("hidden");
     statItemsCell.classList.add("hidden");
@@ -191,6 +198,8 @@ function renderInventory() {
     else if (qty <= 2) { statusClass = "status-low"; statusText = "Low"; }
 
     const canEdit = userCanEditItem(item);
+    const editorName = getItemEditorName(item);
+    const editorDate = formatTimestamp(item.updatedAt || item.createdAt);
 
     return `
       <div class="inv-card">
@@ -200,6 +209,9 @@ function renderInventory() {
         </div>
         <div class="inv-dept">${capitalize(item.department)} · ${escapeHtml(item.category || "—")}</div>
         <div class="inv-qty">Qty: <span>${qty}</span></div>
+        <div class="inv-editor">
+          Last edited by <span>${escapeHtml(editorName)}</span>${editorDate ? ` · ${escapeHtml(editorDate)}` : ""}
+        </div>
         <div class="inv-actions">
           <button onclick="window.openHistory('${item.id}')">History</button>
           ${canEdit ? `<button onclick="window.openEdit('${item.id}')">Edit</button>` : ""}
@@ -251,12 +263,16 @@ modalSave.addEventListener("click", async () => {
   if (!name) { alert("Item name is required"); return; }
 
   try {
+    const userIdentity = getCurrentUserIdentity();
     if (editingItemId) {
       const oldItem = allItems.find(i => i.id === editingItemId);
       await updateDoc(doc(db, "items", editingItemId), {
         name, department, category, quantity,
         updatedAt: serverTimestamp(),
-        updatedBy: currentUser.email
+        updatedBy: userIdentity.email,
+        updatedByUid: userIdentity.uid,
+        updatedByName: userIdentity.name,
+        updatedByEmail: userIdentity.email
       });
       if (oldItem && oldItem.quantity !== quantity) {
         await addLog(editingItemId, {
@@ -269,7 +285,15 @@ modalSave.addEventListener("click", async () => {
       const newDoc = await addDoc(itemsCollection, {
         name, department, category, quantity,
         createdAt: serverTimestamp(),
-        createdBy: currentUser.email
+        createdBy: userIdentity.email,
+        createdByUid: userIdentity.uid,
+        createdByName: userIdentity.name,
+        createdByEmail: userIdentity.email,
+        updatedAt: serverTimestamp(),
+        updatedBy: userIdentity.email,
+        updatedByUid: userIdentity.uid,
+        updatedByName: userIdentity.name,
+        updatedByEmail: userIdentity.email
       });
       await addLog(newDoc.id, {
         reason: "purchased",
@@ -327,13 +351,14 @@ function loadHistory(itemId) {
       const qty = log.qtyChange || 0;
       const qtyClass = qty > 0 ? "up" : "down";
       const qtySign = qty > 0 ? "+" : "";
+      const actor = log.userName || log.userEmail || log.user || "unknown";
       return `
         <div class="history-row">
           <div class="history-row-top">
             <span class="history-reason">${escapeHtml(log.reason)}</span>
             <span class="history-qty ${qtyClass}">${qtySign}${qty}</span>
           </div>
-          <div class="history-meta">${escapeHtml(log.user || "unknown")} · ${date}</div>
+          <div class="history-meta">${escapeHtml(actor)} · ${date}</div>
           ${log.note ? `<div class="history-note">"${escapeHtml(log.note)}"</div>` : ""}
         </div>
       `;
@@ -349,10 +374,14 @@ logSaveBtn.addEventListener("click", async () => {
   try {
     const item = allItems.find(i => i.id === historyItemId);
     const newQty = Math.max(0, (item.quantity || 0) + qtyChange);
+    const userIdentity = getCurrentUserIdentity();
     await updateDoc(doc(db, "items", historyItemId), {
       quantity: newQty,
       updatedAt: serverTimestamp(),
-      updatedBy: currentUser.email
+      updatedBy: userIdentity.email,
+      updatedByUid: userIdentity.uid,
+      updatedByName: userIdentity.name,
+      updatedByEmail: userIdentity.email
     });
 
     await addLog(historyItemId, { reason, qtyChange, note });
@@ -366,11 +395,15 @@ logSaveBtn.addEventListener("click", async () => {
 
 async function addLog(itemId, { reason, qtyChange, note }) {
   const logsRef = collection(db, "items", itemId, "logs");
+  const userIdentity = getCurrentUserIdentity();
   await addDoc(logsRef, {
     reason,
     qtyChange,
     note: note || "",
-    user: currentUser.email,
+    user: userIdentity.email,
+    userUid: userIdentity.uid,
+    userName: userIdentity.name,
+    userEmail: userIdentity.email,
     timestamp: serverTimestamp()
   });
 }
@@ -425,6 +458,86 @@ async function exportInventory() {
   }
 }
 
+// ===== Import inventory from Excel =====
+importBtn.addEventListener("click", () => importGuideModal.classList.remove("hidden"));
+
+document.getElementById("import-guide-cancel").addEventListener("click", () => {
+  importGuideModal.classList.add("hidden");
+});
+
+document.getElementById("import-guide-choose").addEventListener("click", () => {
+  importGuideModal.classList.add("hidden");
+  importFileInput.click();
+});
+
+importFileInput.addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (evt) => {
+    const workbook = window.XLSX.read(new Uint8Array(evt.target.result), { type: "array" });
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const rows = window.XLSX.utils.sheet_to_json(sheet, { defval: "" });
+    importFileInput.value = "";
+    showImportPreview(rows);
+  };
+  reader.readAsArrayBuffer(file);
+});
+
+function normalise(row, key) {
+  return row[key] || row[key.charAt(0).toUpperCase() + key.slice(1)] || "";
+}
+
+function showImportPreview(rows) {
+  if (!rows.length) { alert("No data found in the file."); return; }
+  const headers = Object.keys(rows[0]);
+  const previewRows = rows.slice(0, 50);
+  const table = document.getElementById("import-preview-table");
+  table.innerHTML =
+    `<thead><tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr></thead>` +
+    `<tbody>${previewRows.map(row =>
+      `<tr>${headers.map(h => `<td>${row[h]}</td>`).join("")}</tr>`
+    ).join("")}</tbody>`;
+  document.getElementById("import-count").textContent =
+    `${rows.length} item(s) ready to import${rows.length > 50 ? " (showing first 50 in preview)" : ""}.`;
+  document.getElementById("import-confirm-btn")._pendingRows = rows;
+  importModal.classList.remove("hidden");
+}
+
+document.getElementById("import-cancel-btn").addEventListener("click", () => {
+  importModal.classList.add("hidden");
+});
+
+document.getElementById("import-confirm-btn").addEventListener("click", async () => {
+  const confirmBtn = document.getElementById("import-confirm-btn");
+  const rows = confirmBtn._pendingRows;
+  if (!rows || !rows.length) return;
+  confirmBtn.disabled = true;
+  confirmBtn.textContent = "Importing…";
+  let imported = 0;
+  for (const row of rows) {
+    try {
+      await addDoc(itemsCollection, {
+        name:       String(normalise(row, "name")),
+        department: String(normalise(row, "department")),
+        category:   String(normalise(row, "category")),
+        quantity:   Number(normalise(row, "quantity")) || 0,
+        createdAt:  serverTimestamp(),
+        updatedAt:  serverTimestamp(),
+        createdBy:  currentUser.uid,
+        createdByName: currentUser.displayName || currentUser.email
+      });
+      imported++;
+    } catch (err) {
+      console.error("Failed to import row:", err);
+    }
+  }
+  importModal.classList.add("hidden");
+  confirmBtn.disabled = false;
+  confirmBtn.textContent = "Import All";
+  alert(`Successfully imported ${imported} item(s).`);
+});
+
 // ===== Active nav link on scroll =====
 const allSections = document.querySelectorAll('section[id]');
 const allNavLinks = document.querySelectorAll('.nav-links a');
@@ -450,4 +563,38 @@ function escapeHtml(str) {
 function capitalize(str) {
   if (!str) return "";
   return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+function getCurrentUserIdentity() {
+  if (!currentUser) {
+    return { uid: "", name: "Unknown user", email: "" };
+  }
+
+  const email = currentUser.email || "";
+  return {
+    uid: currentUser.uid,
+    name: currentUser.displayName || email || "Unknown user",
+    email
+  };
+}
+
+function getItemEditorName(item) {
+  return item.updatedByName
+    || item.updatedByEmail
+    || item.updatedBy
+    || item.createdByName
+    || item.createdByEmail
+    || item.createdBy
+    || "unknown";
+}
+
+function formatTimestamp(timestamp) {
+  if (!timestamp?.toDate) return "";
+  return timestamp.toDate().toLocaleString([], {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit"
+  });
 }
