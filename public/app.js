@@ -9,12 +9,12 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB3RSRmI2WpbuaJqnL320WEjOHBb48AP_E",
-  authDomain: "utm-deeptech-28760.firebaseapp.com",
-  projectId: "utm-deeptech-28760",
-  storageBucket: "utm-deeptech-28760.firebasestorage.app",
-  messagingSenderId: "440186843716",
-  appId: "1:440186843716:web:6710df804ac02fe1bd0211"
+  apiKey: "AIzaSyCefvRUU-HqVClFrKp8lDt1KJOj5nCltrc",
+  authDomain: "utm-deeptech.firebaseapp.com",
+  projectId: "utm-deeptech",
+  storageBucket: "utm-deeptech.firebasestorage.app",
+  messagingSenderId: "415981426592",
+  appId: "1:415981426592:web:41b06389f18dc2ab4776c5"
 };
 
 const app = initializeApp(firebaseConfig);
