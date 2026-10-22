@@ -2,7 +2,7 @@
 
 Inventory management and member portal for UTM DeepTech, the underwater robotics club at UTM.
 
-Live site: _coming soon_
+Live site: https://utm-deeptech.web.app
 
 ## Tech stack
 
