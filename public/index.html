@@ -3,277 +3,455 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>UTM DeepTech — Underwater Robotics</title>
+  <title>UTM DeepTech — Autonomous Underwater Robotics</title>
+  <meta name="description" content="UTM DeepTech is an elite student-led deep-tech innovation hub at Universiti Teknologi Malaysia, pioneering autonomous underwater vehicle technology for international competition." />
+  <meta property="og:title" content="UTM DeepTech — Autonomous Underwater Robotics" />
+  <meta property="og:description" content="Pioneering autonomous underwater vehicle technology at UTM." />
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
-  <!-- Top navigation -->
-  <nav class="nav">
-    <a href="/" class="brand">
-      <img src="images/main_logo.png" alt="DeepTech Underwater Robotics" class="nav-logo">
-    </a>
-    <div class="nav-links">
-      <a href="#about">About</a>
-      <a href="#workshops">Workshops</a>
-      <a id="nav-inventory-link" href="#inventory" class="hidden">Inventory</a>
-      <a href="#sponsors">Sponsors</a>
-    </div>
-    <div class="nav-right">
-      <span id="user-info" class="user-info hidden"></span>
-      <button id="login-btn" class="nav-login">Sign in</button>
-      <button id="logout-btn" class="nav-login hidden">Sign out</button>
+  <!-- ===== NAVIGATION ===== -->
+  <nav class="nav" id="main-nav">
+    <div class="nav-inner">
+      <a href="/" class="nav-brand">
+        <img src="images/main_logo.png" alt="UTM DeepTech" class="nav-logo">
+      </a>
+
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+      <div class="nav-menu" id="nav-menu">
+        <div class="nav-links">
+          <a href="#mission">Mission</a>
+          <a href="#research">Research</a>
+          <a href="#programs">Programs</a>
+          <a href="#competition">Competition</a>
+          <a id="nav-inventory-link" href="#inventory" class="hidden">Inventory</a>
+          <a href="#contact">Contact</a>
+        </div>
+        <div class="nav-actions">
+          <span id="user-info" class="user-info hidden"></span>
+          <button id="login-btn" class="btn-nav-login">Sign in</button>
+          <button id="logout-btn" class="btn-nav-login hidden">Sign out</button>
+          <a href="#contact" class="btn-nav-cta">Get Involved</a>
+        </div>
+      </div>
     </div>
   </nav>
 
   <!-- ===== HERO ===== -->
-  <section class="hero">
-    <div class="bubbles">
-      <span></span><span></span><span></span><span></span><span></span>
-      <span></span><span></span><span></span><span></span><span></span>
-      <span></span><span></span><span></span><span></span><span></span>
-    </div>
-    <div class="hero-grid"></div>
-
-    <svg class="hero-waves" viewBox="0 0 1440 120" preserveAspectRatio="none">
-      <path class="wave wave-1" d="M0,60 C240,100 480,20 720,60 C960,100 1200,20 1440,60 L1440,120 L0,120 Z"></path>
-      <path class="wave wave-2" d="M0,80 C240,40 480,100 720,80 C960,60 1200,100 1440,80 L1440,120 L0,120 Z"></path>
-    </svg>
+  <section class="hero" id="hero">
+    <div class="hero-grid-bg"></div>
+    <div class="hero-glow-1"></div>
+    <div class="hero-glow-2"></div>
 
     <div class="hero-inner">
       <div class="hero-content">
-        <div class="hero-badge">UTM Underwater Robotics Club</div>
-        <h1 class="hero-title">We build <span class="accent">autonomous</span><br />underwater vehicles.</h1>
-        <p class="hero-subtitle">
-          UTM DeepTech is a student-led club at Universiti Teknologi Malaysia building AUVs and ROVs for international competitions like the Singapore AUV Challenge.
+        <div class="hero-badge animate-up">
+          <span class="hero-badge-dot"></span>
+          UTM DeepTech · Universiti Teknologi Malaysia
+        </div>
+
+        <h1 class="hero-title animate-up delay-1">
+          Engineering the<br>
+          <span class="hero-accent">Deep-Tech</span><br>
+          Future.
+        </h1>
+
+        <p class="hero-subtitle animate-up delay-2">
+          Malaysia's elite autonomous underwater robotics team — building world-class AUVs, pushing the frontier of deep-tech, and producing the engineers of tomorrow.
         </p>
-        <div class="hero-actions">
-          <a href="#about" class="btn-hero-primary">Join the Club</a>
-          <a id="hero-inventory-btn" href="#inventory" class="btn-hero-outline hidden">View Inventory</a>
+
+        <div class="hero-ctas animate-up delay-3">
+          <a href="#research" class="btn-primary-hero">
+            Explore Our Work
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <a id="hero-inventory-btn" href="#inventory" class="btn-outline-hero hidden">View Inventory</a>
+          <a href="#contact" class="btn-outline-hero">Get Involved</a>
+        </div>
+
+        <div class="hero-proof animate-up delay-4">
+          <div class="hero-stat">
+            <span class="hero-stat-n">20+</span>
+            <span class="hero-stat-l">Engineers</span>
+          </div>
+          <div class="hero-stat-sep"></div>
+          <div class="hero-stat">
+            <span class="hero-stat-n">3</span>
+            <span class="hero-stat-l">Disciplines</span>
+          </div>
+          <div class="hero-stat-sep"></div>
+          <div class="hero-stat">
+            <span class="hero-stat-n">SAUVC</span>
+            <span class="hero-stat-l">Competition</span>
+          </div>
+          <div class="hero-stat-sep"></div>
+          <div class="hero-stat">
+            <span class="hero-stat-n">100%</span>
+            <span class="hero-stat-l">Student Built</span>
+          </div>
         </div>
       </div>
 
-      <div class="hero-visual">
-        <div class="hero-photos">
-          <div class="photo-main">
-            <img src="images/image_001.jpeg" alt="DeepTech team at work" />
+      <div class="hero-visual animate-up delay-2">
+        <div class="hero-photo-main">
+          <img src="images/image_001.jpeg" alt="UTM DeepTech team at work" loading="lazy">
+        </div>
+        <div class="hero-photo-stack">
+          <div class="hero-photo-sm">
+            <img src="images/image_002.jpeg" alt="DeepTech team" loading="lazy">
           </div>
-          <div class="photo-stack">
-            <div class="photo-small">
-              <img src="images/image_002.jpeg" alt="DeepTech team" />
+          <div class="hero-photo-sm">
+            <img src="images/image_003.jpeg" alt="DeepTech robot" loading="lazy">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-scroll-hint">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    </div>
+  </section>
+
+  <!-- ===== MISSION ===== -->
+  <section id="mission" class="mission-section">
+    <div class="container">
+      <div class="section-label reveal">Our Foundation</div>
+      <h2 class="section-h2 reveal">Driven by purpose.<br>Defined by precision.</h2>
+      <p class="section-p reveal">We exist to push the frontier of autonomous underwater technology — producing elite engineers who solve real-world challenges in ocean exploration and marine infrastructure.</p>
+
+      <div class="mission-cards reveal">
+        <div class="mission-card">
+          <div class="mission-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </div>
+          <div class="mission-card-tag">Vision</div>
+          <h3>Lead Malaysia in marine autonomous systems.</h3>
+          <p>Become Southeast Asia's premier university robotics team — advancing AUV technology and setting the standard for deep-tech innovation in higher education.</p>
+        </div>
+
+        <div class="mission-card mission-card--featured">
+          <div class="mission-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+          </div>
+          <div class="mission-card-tag">Mission</div>
+          <h3>Build elite engineers through deep-tech competition.</h3>
+          <p>Empowering UTM students with hands-on mastery in robotics, AI, and systems engineering — through international competition, rigorous research, and collaborative innovation.</p>
+        </div>
+
+        <div class="mission-card">
+          <div class="mission-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <div class="mission-card-tag">Impact</div>
+          <h3>Create technology that works beyond the lab.</h3>
+          <p>Developing systems with real-world applications — underwater inspection, environmental monitoring, and marine exploration — bridging academic research and industry engineering.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PORTFOLIO / AUV PLATFORM ===== -->
+  <section id="portfolio" class="portfolio-section">
+    <div class="container">
+      <div class="section-label reveal">Our Platform</div>
+      <h2 class="section-h2 reveal">Autonomous vehicles.<br>Built from the ground up.</h2>
+      <p class="section-p reveal">Every component designed, fabricated, and programmed by our team. No black boxes — we own the entire stack.</p>
+
+      <div class="portfolio-layout reveal">
+        <div class="portfolio-video-wrap">
+          <video class="portfolio-video" controls poster="images/image_001.jpeg" loading="lazy">
+            <source src="assets/ROV_V2%20-%20Render%20(3)_Motion%20Study.mp4" type="video/mp4">
+          </video>
+          <div class="portfolio-video-tag">ROV v2.0 · CAD Render</div>
+        </div>
+
+        <div class="portfolio-specs">
+          <div class="portfolio-spec reveal">
+            <div class="spec-num">01</div>
+            <div class="spec-body">
+              <h3>Autonomous Navigation</h3>
+              <p>Custom ROS2 autonomy stack with real-time sensor fusion, state estimation, and mission planning for complex underwater tasks.</p>
             </div>
-            <div class="photo-small">
-              <img src="images/image_003.jpeg" alt="DeepTech team" />
+          </div>
+          <div class="portfolio-spec reveal delay-1">
+            <div class="spec-num">02</div>
+            <div class="spec-body">
+              <h3>Computer Vision</h3>
+              <p>YOLO-based object detection pipeline optimized for underwater conditions — identifying targets, gates, and obstacles in real time.</p>
+            </div>
+          </div>
+          <div class="portfolio-spec reveal delay-2">
+            <div class="spec-num">03</div>
+            <div class="spec-body">
+              <h3>Custom Electronics</h3>
+              <p>In-house PCB design with custom power distribution, motor control, and sensor integration — rated for pressure and salinity.</p>
+            </div>
+          </div>
+          <div class="portfolio-spec reveal delay-3">
+            <div class="spec-num">04</div>
+            <div class="spec-body">
+              <h3>Precision Mechanics</h3>
+              <p>Waterproof hull design with high-torque thrusters, watertight penetrators, and CNC-machined structural components.</p>
             </div>
           </div>
         </div>
-        <p class="hero-photos-caption"> From our activities</p>
       </div>
     </div>
   </section>
 
-  <!-- ===== ABOUT ===== -->
-  <section id="about" class="about-section">
-    <div class="section-inner">
-      <div class="eyebrow">About us</div>
-      <h2 class="section-h2">Engineering for the deep.</h2>
-      <p class="section-lead">
-        We're a multidisciplinary team of students passionate about marine robotics. Our work spans mechanical design, embedded electronics, and software — all coming together to build vehicles that can think and move underwater.
-      </p>
+  <!-- ===== RESEARCH AREAS ===== -->
+  <section id="research" class="research-section">
+    <div class="container">
+      <div class="section-label section-label--light reveal">Research & Innovation</div>
+      <h2 class="section-h2 section-h2--light reveal">Three disciplines.<br>One unified system.</h2>
+      <p class="section-p section-p--light reveal">Every team member is a specialist who contributes to a seamlessly integrated autonomous vehicle.</p>
 
-      <div class="dept-cards">
-        <div class="dept-card">
-          <div class="dept-icon dept-icon-prog">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="16 18 22 12 16 6"></polyline>
-              <polyline points="8 6 2 12 8 18"></polyline>
-            </svg>
+      <div class="research-grid">
+        <div class="research-card reveal">
+          <div class="research-card-num">01</div>
+          <div class="research-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
           </div>
-          <h3>Programming</h3>
-          <p>ROS2, computer vision, autonomy stacks, simulation, and the mission control software that makes the vehicle act on its own.</p>
+          <div class="research-tag">Software</div>
+          <h3>Programming &<br>Autonomy</h3>
+          <p>ROS2, computer vision, SLAM, mission control, and the autonomy stack that makes the vehicle think independently underwater.</p>
+          <div class="research-tech">
+            <span>ROS2</span><span>Python</span><span>C++</span><span>YOLO</span><span>OpenCV</span>
+          </div>
         </div>
 
-        <div class="dept-card">
-          <div class="dept-icon dept-icon-elec">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
-            </svg>
+        <div class="research-card reveal delay-1">
+          <div class="research-card-num">02</div>
+          <div class="research-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
           </div>
-          <h3>Electronics</h3>
-          <p>Power systems, microcontrollers, sensor integration, motor drivers, and the wiring that keeps every subsystem alive underwater.</p>
+          <div class="research-tag">Hardware</div>
+          <h3>Electronics &<br>Embedded Systems</h3>
+          <p>Power systems, microcontrollers, sensor arrays, motor drivers, and custom PCB design for waterproof, pressure-rated reliability.</p>
+          <div class="research-tech">
+            <span>PCB Design</span><span>KiCAD</span><span>STM32</span><span>CAN Bus</span>
+          </div>
         </div>
 
-        <div class="dept-card">
-          <div class="dept-icon dept-icon-mech">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="3"></circle>
-              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-            </svg>
+        <div class="research-card reveal delay-2">
+          <div class="research-card-num">03</div>
+          <div class="research-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.6 9H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9"/></svg>
           </div>
-          <h3>Mechanism</h3>
-          <p>Hull design, waterproofing, thruster mounting, frame fabrication, and CAD work that defines the vehicle's physical shape.</p>
+          <div class="research-tag">Mechanical</div>
+          <h3>Mechanism &<br>Vehicle Design</h3>
+          <p>Hull geometry, waterproofing systems, thruster mounting, frame fabrication, and the CAD work that defines the vehicle's physical form.</p>
+          <div class="research-tech">
+            <span>Onshape</span><span>CAD/CAM</span><span>FEA</span><span>Waterproofing</span>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ===== VISION & MISSION ===== -->
-  <section class="vm-section">
-    <div class="section-inner">
-      <div class="vm-grid">
-
-        <div class="vm-card">
-          <div class="vm-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <circle cx="12" cy="12" r="3"></circle>
-              <path d="M2 12C2 12 5 5 12 5s10 7 10 7-3 7-10 7S2 12 2 12z"></path>
-            </svg>
-          </div>
-          <div class="vm-label">Vision</div>
-          <p class="vm-text">To position UTM at the national forefront of marine robotics — advancing autonomous underwater vehicle technology and developing innovative engineers who tackle real-world challenges in underwater exploration.</p>
+  <!-- ===== METRICS ===== -->
+  <section class="metrics-section">
+    <div class="container">
+      <div class="metrics-grid">
+        <div class="metric reveal">
+          <div class="metric-number" data-target="20">0</div>
+          <div class="metric-suffix">+</div>
+          <div class="metric-label">Active Engineers</div>
+          <div class="metric-sub">Across 3 technical disciplines</div>
         </div>
-
-        <div class="vm-card">
-          <div class="vm-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <circle cx="12" cy="12" r="10"></circle>
-              <circle cx="12" cy="12" r="6"></circle>
-              <circle cx="12" cy="12" r="2"></circle>
-            </svg>
-          </div>
-          <div class="vm-label">Mission</div>
-          <p class="vm-text">To empower UTM students through competitive excellence in marine robotics — fostering innovation, building future leaders, and bridging the gap between academic research and real-world engineering.</p>
+        <div class="metric reveal delay-1">
+          <div class="metric-number" data-target="3">0</div>
+          <div class="metric-suffix"></div>
+          <div class="metric-label">Core Departments</div>
+          <div class="metric-sub">Software, Hardware, Mechanical</div>
         </div>
-
+        <div class="metric reveal delay-2">
+          <div class="metric-number" data-target="100">0</div>
+          <div class="metric-suffix">%</div>
+          <div class="metric-label">Student Built</div>
+          <div class="metric-sub">Every component, by our team</div>
+        </div>
+        <div class="metric reveal delay-3">
+          <div class="metric-number" data-target="1">0</div>
+          <div class="metric-suffix"></div>
+          <div class="metric-label">Global Competition</div>
+          <div class="metric-sub">Singapore AUV Challenge</div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- ===== STATS ===== -->
-  <section class="stats-bar">
-    <div class="stat-cell">
-      <div class="stat-num">3</div>
-      <div class="stat-label">Departments</div>
-    </div>
-    <div id="stat-items-cell" class="stat-cell hidden">
-      <div class="stat-num" id="stat-items">0</div>
-      <div class="stat-label">Items tracked</div>
-    </div>
-    <div id="stat-low-cell" class="stat-cell hidden">
-      <div class="stat-num" id="stat-low">0</div>
-      <div class="stat-label">Low / out of stock</div>
-    </div>
-    <div class="stat-cell">
-      <div class="stat-num">SAUVC</div>
-      <div class="stat-label">Next competition</div>
-    </div>
-  </section>
+  <!-- ===== PROGRAMS ===== -->
+  <section id="programs" class="programs-section">
+    <div class="container">
+      <div class="section-label reveal">Training Programs</div>
+      <h2 class="section-h2 reveal">Learn deep-tech.<br>From practitioners.</h2>
+      <p class="section-p reveal">Our workshops are taught by team members who've built real systems — not textbooks. Hands-on, practical, and industry-relevant.</p>
 
-  <!-- ===== AUV PLATFORM ===== -->
-  <section id="platform" class="platform-section">
-    <div class="section-inner">
-      <div class="eyebrow">Our Vehicles</div>
-      <h2 class="section-h2">AUV Platform.</h2>
-      <p class="section-lead">
-        Designed and built entirely by our members for autonomous underwater navigation, vision-based task completion, and international competition missions.
-      </p>
-      <div class="platform-video-wrap">
-        <video class="platform-video" controls>
-          <source src="assets/ROV_V2%20-%20Render%20(3)_Motion%20Study.mp4" type="video/mp4">
-        </video>
+      <div class="programs-grid">
+        <div class="program-card reveal">
+          <div class="program-status">Upcoming</div>
+          <div class="program-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          </div>
+          <h3>Mechanical Design with Onshape</h3>
+          <p>Hands-on 3D modeling for underwater components — from hull geometry to thruster mounting systems and waterproof enclosures.</p>
+          <div class="program-meta">
+            <span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              TBA
+            </span>
+            <span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              UTM, Skudai
+            </span>
+          </div>
+          <a href="#contact" class="program-cta">Register Interest →</a>
+        </div>
+
+        <div class="program-card reveal delay-1">
+          <div class="program-status">Upcoming</div>
+          <div class="program-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>
+          </div>
+          <h3>PCB Design with KiCAD</h3>
+          <p>From schematic capture to board layout — design production-ready circuit boards for robotics and embedded systems applications.</p>
+          <div class="program-meta">
+            <span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              TBA
+            </span>
+            <span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              UTM, Skudai
+            </span>
+          </div>
+          <a href="#contact" class="program-cta">Register Interest →</a>
+        </div>
+
+        <div class="program-card reveal delay-2">
+          <div class="program-status">Upcoming</div>
+          <div class="program-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          </div>
+          <h3>Computer Vision with YOLO</h3>
+          <p>Train and deploy real-time object detection models for robotics — from dataset preparation to underwater inference optimization.</p>
+          <div class="program-meta">
+            <span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              TBA
+            </span>
+            <span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              UTM, Skudai
+            </span>
+          </div>
+          <a href="#contact" class="program-cta">Register Interest →</a>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- ===== SAUVC ===== -->
-  <section class="competition-section">
-    <div class="section-inner">
-      <div class="competition-inner">
-
-        <div class="competition-text">
-          <div class="competition-eyebrow">Target Competition</div>
-          <div class="competition-heading-row">
-            <h2 class="competition-h2">Singapore AUV<br/>Challenge.</h2>
-            <img src="images/logo_notext.png" alt="SAUVC Logo" class="competition-logo" />
-          </div>
-          <p class="competition-desc">
-            SAUVC is one of Asia's most prestigious autonomous underwater vehicle competitions, held annually in Singapore. Teams from universities across the globe design and build AUVs capable of completing complex missions — fully autonomously, no human control allowed.
-          </p>
-          <p class="competition-desc">
-            Competing at SAUVC is our north star. It's where we test everything we've built — the code, the hardware, the teamwork — against the best student engineers in the region.
-          </p>
-          <a href="https://sauvc.org/" target="_blank" rel="noopener" class="competition-link">
+  <!-- ===== COMPETITION ===== -->
+  <section id="competition" class="competition-section">
+    <div class="container">
+      <div class="competition-layout">
+        <div class="competition-content reveal">
+          <div class="section-label section-label--light">Target Competition</div>
+          <h2 class="section-h2 section-h2--light">Singapore AUV<br>Challenge.</h2>
+          <p class="section-p section-p--light">Asia's most prestigious autonomous underwater vehicle competition. Our north star — where every line of code, every circuit, every design decision is put to the test against the region's best engineers.</p>
+          <ul class="competition-list">
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><polyline points="20 6 9 17 4 12"/></svg>
+              Fully autonomous — zero human intervention during missions
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><polyline points="20 6 9 17 4 12"/></svg>
+              International teams from universities across Asia and beyond
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><polyline points="20 6 9 17 4 12"/></svg>
+              Held annually at a world-class aquatic facility in Singapore
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><polyline points="20 6 9 17 4 12"/></svg>
+              Real mission scenarios: navigation, target acquisition, depth control
+            </li>
+          </ul>
+          <a href="https://sauvc.org/" target="_blank" rel="noopener" class="btn-outline-light">
             Learn about SAUVC
-            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M4 10h12M10 4l6 6-6 6"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
           </a>
         </div>
 
-        <div class="competition-cards">
-          <div class="comp-card">
-            <div class="comp-card-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="24" height="24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-            </div>
-            <div class="comp-card-label">International</div>
-            <div class="comp-card-sub">Universities competing from across Asia and beyond</div>
+        <div class="competition-visual reveal delay-1">
+          <div class="comp-logo-frame">
+            <img src="images/logo_notext.png" alt="SAUVC Logo" class="comp-logo">
           </div>
-          <div class="comp-card">
-            <div class="comp-card-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="24" height="24"><rect x="2" y="3" width="20" height="14" rx="2"/><polyline points="8 21 12 17 16 21"/></svg>
+          <div class="comp-stat-cards">
+            <div class="comp-stat-card">
+              <div class="comp-stat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              </div>
+              <div>
+                <div class="comp-stat-val">International</div>
+                <div class="comp-stat-sub">Global University Teams</div>
+              </div>
             </div>
-            <div class="comp-card-label">Fully Autonomous</div>
-            <div class="comp-card-sub">Zero human input during underwater missions</div>
-          </div>
-          <div class="comp-card">
-            <div class="comp-card-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="24" height="24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <div class="comp-stat-card">
+              <div class="comp-stat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              </div>
+              <div>
+                <div class="comp-stat-val">Fully Autonomous</div>
+                <div class="comp-stat-sub">Zero Human Input</div>
+              </div>
             </div>
-            <div class="comp-card-label">Singapore</div>
-            <div class="comp-card-sub">Held annually at a world-class aquatic facility</div>
+            <div class="comp-stat-card">
+              <div class="comp-stat-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
+              <div>
+                <div class="comp-stat-val">Singapore</div>
+                <div class="comp-stat-sub">World-Class Venue</div>
+              </div>
+            </div>
           </div>
         </div>
-
       </div>
     </div>
   </section>
 
-  <!-- ===== WORKSHOPS ===== -->
-  <section id="workshops" class="workshops-section">
-    <div class="section-inner">
-      <div class="eyebrow">What we do</div>
-      <h2 class="section-h2">Workshops & events.</h2>
-      <p class="section-lead">
-        We run hands-on workshops on campus to share what we've learned and bring more students into underwater robotics.
-      </p>
+  <!-- ===== PARTNERS ===== -->
+  <section id="partners" class="partners-section">
+    <div class="container">
+      <div class="section-label reveal">Industry Partners</div>
+      <h2 class="section-h2 reveal">Backed by leaders<br>in deep-tech.</h2>
+      <p class="section-p reveal">We collaborate with industry-leading organizations who share our commitment to advancing frontier technology and engineering education.</p>
 
-      <div class="workshop-grid">
-        <div class="workshop-card">
-          <div class="workshop-tag tag-upcoming">Upcoming</div>
-          <h3>Learn mechanical design on Onshape</h3>
-          <p>Hands-on session covering the basics of 3D modeling, CAD workflows, and design practices for underwater vehicle components.</p>
-          <div class="workshop-meta">
-            <span>📅 TBA</span>
-            <span>📍 UTM, Skudai</span>
+      <div class="partners-grid reveal">
+        <a href="https://www.onshape.com" target="_blank" rel="noopener" class="partner-card">
+          <img src="images/onshape.png" alt="Onshape" loading="lazy">
+          <div class="partner-label">3D CAD Platform</div>
+        </a>
+        <div class="partner-card partner-card--cta">
+          <div class="partner-cta-inner">
+            <p>Become a Partner</p>
+            <a href="mailto:utmdeeptech@gmail.com">utmdeeptech@gmail.com</a>
           </div>
         </div>
-
-        <div class="workshop-card">
-          <div class="workshop-tag tag-upcoming">Upcoming</div>
-          <h3>KiCAD and PCB design</h3>
-          <p>Introduction to designing circuit boards using KiCAD, covering schematic capture, PCB layout, and best practices for robotics applications.</p>
-          <div class="workshop-meta">
-            <span>📅 TBA</span>
-            <span>📍 UTM, Skudai</span>
-          </div>
-        </div>
-
-        <div class="workshop-card">
-          <div class="workshop-tag tag-upcoming">Upcoming</div>
-          <h3>Computer vision with YOLO</h3>
-          <p>Workshop on training and deploying YOLO models for real-time object detection in robotics applications.</p>
-          <div class="workshop-meta">
-            <span>📅 TBA</span>
-            <span>📍 UTM, Skudai</span>
+        <div class="partner-card partner-card--cta">
+          <div class="partner-cta-inner">
+            <p>Sponsor Our Team</p>
+            <a href="#contact">Get in touch →</a>
           </div>
         </div>
       </div>
@@ -281,13 +459,11 @@
   </section>
 
   <!-- ===== INVENTORY ===== -->
-  <section id="inventory" class="section">
-    <div class="section-inner">
-      <div class="eyebrow">Resources</div>
-      <h2 class="section-h2">Club inventory.</h2>
-      <p class="section-lead">
-        Everything we own, tracked by department. Members can log usage, losses, and new purchases in real time.
-      </p>
+  <section id="inventory" class="inventory-section">
+    <div class="container">
+      <div class="section-label reveal">Member Resources</div>
+      <h2 class="section-h2 reveal">Club inventory.</h2>
+      <p class="section-p reveal">Everything we own, tracked by department. Members can log usage, losses, and new purchases in real time.</p>
 
       <div class="inventory-toolbar">
         <div class="dept-tabs" id="dept-tabs">
@@ -296,10 +472,12 @@
           <button class="dept-tab" data-dept="electronics">Electronics</button>
           <button class="dept-tab" data-dept="mechanism">Mechanism</button>
         </div>
-        <button id="export-inventory-btn" class="export-btn hidden">⬇ Export as CSV</button>
-        <input type="file" id="import-file-input" accept=".xlsx,.xls,.csv" style="display:none">
-        <button id="import-inventory-btn" class="export-btn hidden">⬆ Import from Excel</button>
-        <button id="add-item-btn" class="btn-primary hidden">+ Add item</button>
+        <div class="inv-toolbar-actions">
+          <button id="export-inventory-btn" class="btn-export hidden">Export CSV</button>
+          <input type="file" id="import-file-input" accept=".xlsx,.xls,.csv" style="display:none">
+          <button id="import-inventory-btn" class="btn-export hidden">Import Excel</button>
+          <button id="add-item-btn" class="btn-primary hidden">+ Add item</button>
+        </div>
       </div>
 
       <div id="inventory-grid" class="inventory-grid">
@@ -308,75 +486,145 @@
     </div>
   </section>
 
-  <!-- ===== SPONSORS ===== -->
-  <section id="sponsors" class="sponsors-section">
-    <div class="section-inner">
-      <div class="eyebrow">Backed by</div>
-      <h2 class="section-h2">Our sponsors.</h2>
-      <p class="section-lead">
-        We're actively looking for sponsors to help us build, compete, and grow. If your organisation believes in student-led engineering, we'd love to hear from you.
-      </p>
+  <!-- ===== CONTACT ===== -->
+  <section id="contact" class="contact-section">
+    <div class="container">
+      <div class="contact-layout">
+        <div class="contact-content reveal">
+          <div class="section-label section-label--light">Get in Touch</div>
+          <h2 class="section-h2 section-h2--light">Work with us.<br>Partner with us.</h2>
+          <p class="section-p section-p--light">Whether you're an industry partner looking to collaborate, an organization interested in sponsoring, or just want to follow what we're building — reach out.</p>
 
-      <div class="sponsor-grid">
-  <a href="https://www.onshape.com" target="_blank" class="sponsor-card">
-    <img src="images/onshape.png" alt="Onshape" />
-  </a>
-      </div>
+          <div class="contact-options">
+            <a href="mailto:utmdeeptech@gmail.com" class="contact-option">
+              <div class="contact-option-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </div>
+              <div>
+                <div class="contact-option-label">Email us directly</div>
+                <div class="contact-option-val">utmdeeptech@gmail.com</div>
+              </div>
+            </a>
+            <a href="https://www.linkedin.com/company/utm-deeptech/" target="_blank" rel="noopener" class="contact-option">
+              <div class="contact-option-icon">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.47-.9 1.64-1.85 3.37-1.85 3.61 0 4.27 2.38 4.27 5.47v6.27zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg>
+              </div>
+              <div>
+                <div class="contact-option-label">Connect on LinkedIn</div>
+                <div class="contact-option-val">utm-deeptech</div>
+              </div>
+            </a>
+            <a href="https://www.instagram.com/__deeptech__" target="_blank" rel="noopener" class="contact-option">
+              <div class="contact-option-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+              </div>
+              <div>
+                <div class="contact-option-label">Follow on Instagram</div>
+                <div class="contact-option-val">@__deeptech__</div>
+              </div>
+            </a>
+          </div>
+        </div>
 
-      <div class="sponsor-cta">
-        <p>Drop us a line at <a href="mailto:utmdeeptech@gmail.com">utmdeeptech@gmail.com</a></p>
+        <div class="contact-card reveal delay-1">
+          <div class="contact-card-header">How We Recruit</div>
+          <p class="contact-card-body">We don't accept open applications. At the start of each academic year we run an open challenge workshop — and from there, standout participants earn a spot on the team.</p>
+          <ul class="contact-req-list">
+            <li>Watch for our annual recruitment workshop announcement</li>
+            <li>Attend and take on the challenge — no prior experience needed</li>
+            <li>Show us your thinking, curiosity, and drive</li>
+            <li>Top performers are invited to join the team</li>
+          </ul>
+          <a href="https://www.instagram.com/__deeptech__" target="_blank" rel="noopener" class="btn-primary-full">
+            Follow us for announcements
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- ===== FOOTER ===== -->
   <footer class="footer">
-    <div class="footer-inner">
-      <div class="footer-brand">
-        <img src="images/main_logo.png" alt="DeepTech Underwater Robotics" class="footer-logo">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand-col">
+          <img src="images/main_logo.png" alt="UTM DeepTech" class="footer-logo">
+          <p class="footer-tagline">Pioneering autonomous underwater technology at Universiti Teknologi Malaysia.</p>
+          <div class="footer-social">
+            <a href="https://www.linkedin.com/company/utm-deeptech/" target="_blank" rel="noopener" aria-label="LinkedIn" class="social-link">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.47-.9 1.64-1.85 3.37-1.85 3.61 0 4.27 2.38 4.27 5.47v6.27zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"/></svg>
+            </a>
+            <a href="https://www.instagram.com/__deeptech__" target="_blank" rel="noopener" aria-label="Instagram" class="social-link">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+            </a>
+            <a href="https://github.com/utm-deeptech" target="_blank" rel="noopener" aria-label="GitHub" class="social-link">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.09 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2.18c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.08-.12-.29-.52-1.46.11-3.04 0 0 .97-.31 3.17 1.18A11.05 11.05 0 0 1 12 6c.98 0 1.95.13 2.87.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.23 2.75.11 3.04.74.8 1.19 1.82 1.19 3.08 0 4.41-2.69 5.38-5.25 5.67.42.36.78 1.06.78 2.14v3.21c0 .31.21.67.79.56A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-links">
+          <div class="footer-col">
+            <h4>Explore</h4>
+            <ul>
+              <li><a href="#mission">Mission</a></li>
+              <li><a href="#research">Research</a></li>
+              <li><a href="#programs">Programs</a></li>
+              <li><a href="#competition">Competition</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Get Involved</h4>
+            <ul>
+              <li><a href="#contact">How to Join</a></li>
+              <li><a href="mailto:utmdeeptech@gmail.com">Become a Partner</a></li>
+              <li><a href="mailto:utmdeeptech@gmail.com">Sponsor Us</a></li>
+              <li><a href="#programs">Attend Workshops</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Contact</h4>
+            <ul>
+              <li><a href="mailto:utmdeeptech@gmail.com">utmdeeptech@gmail.com</a></li>
+              <li><span>UTM Skudai, Johor</span></li>
+              <li><span>Malaysia</span></li>
+              <li><a href="https://sauvc.org/" target="_blank" rel="noopener">SAUVC ↗</a></li>
+            </ul>
+          </div>
+        </div>
       </div>
-      <div class="footer-social">
-        <span class="footer-social-label">Follow us</span>
-        <a href="https://www.linkedin.com/company/utm-deeptech/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="UTM DeepTech on LinkedIn">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.47-.9 1.64-1.85 3.37-1.85 3.61 0 4.27 2.38 4.27 5.47v6.27zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.72V1.72C24 .77 23.2 0 22.22 0z"></path>
-          </svg>
-        </a>
-        <a href="https://www.instagram.com/__deeptech__?igsh=MTVjNTZybXpuenJ3Mg==" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="UTM DeepTech on Instagram">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M7.75 2h8.5A5.76 5.76 0 0 1 22 7.75v8.5A5.76 5.76 0 0 1 16.25 22h-8.5A5.76 5.76 0 0 1 2 16.25v-8.5A5.76 5.76 0 0 1 7.75 2zm0 2A3.75 3.75 0 0 0 4 7.75v8.5A3.75 3.75 0 0 0 7.75 20h8.5A3.75 3.75 0 0 0 20 16.25v-8.5A3.75 3.75 0 0 0 16.25 4h-8.5zM12 7.25A4.75 4.75 0 1 1 12 16.75 4.75 4.75 0 0 1 12 7.25zm0 2A2.75 2.75 0 1 0 12 14.75 2.75 2.75 0 0 0 12 9.25zm5-2.5a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5z"></path>
-          </svg>
-        </a>
-        <a href="https://github.com/utm-deeptech" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="UTM DeepTech on GitHub">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.09 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2.18c-3.2.7-3.87-1.36-3.87-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.71 1.26 3.37.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.08-.12-.29-.52-1.46.11-3.04 0 0 .97-.31 3.17 1.18A11.05 11.05 0 0 1 12 6c.98 0 1.95.13 2.87.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.23 2.75.11 3.04.74.8 1.19 1.82 1.19 3.08 0 4.41-2.69 5.38-5.25 5.67.42.36.78 1.06.78 2.14v3.21c0 .31.21.67.79.56A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"></path>
-          </svg>
-        </a>
+
+      <div class="footer-bottom">
+        <div class="footer-copy">© 2026 UTM DeepTech. Built by club members. Universiti Teknologi Malaysia.</div>
+        <div class="footer-inventory-stats">
+          <div class="stat-cell-mini hidden" id="stat-items-cell">
+            <span id="stat-items">—</span> items tracked
+          </div>
+          <div class="stat-cell-mini hidden" id="stat-low-cell">
+            <span id="stat-low">—</span> low stock
+          </div>
+        </div>
       </div>
-      <div class="footer-copy">© 2026 UTM DeepTech. Built by club members.</div>
     </div>
   </footer>
 
-  <!-- Modals -->
+  <!-- ===== MODALS (preserved) ===== -->
   <div id="item-modal" class="modal hidden">
     <div class="modal-content">
       <h3 id="modal-title">Add item</h3>
       <label>Item name</label>
       <input type="text" id="item-name" placeholder="e.g. BlueESC thruster" />
-
       <label>Department</label>
       <select id="item-dept">
         <option value="programming">Programming</option>
         <option value="electronics">Electronics</option>
         <option value="mechanism">Mechanism</option>
       </select>
-
       <label>Category</label>
       <input type="text" id="item-category" placeholder="e.g. Propulsion" />
-
       <label>Quantity</label>
       <input type="number" id="item-qty" min="0" value="0" />
-
       <div class="modal-actions">
         <button id="modal-cancel" class="btn-outline">Cancel</button>
         <button id="modal-save" class="btn-primary">Save</button>
@@ -388,7 +636,6 @@
     <div class="modal-content">
       <h3>Change history</h3>
       <div id="history-item-name" class="history-item-name"></div>
-
       <div id="log-entry-section" class="hidden">
         <label>What happened?</label>
         <select id="log-reason">
@@ -400,26 +647,20 @@
           <option value="purchased">Purchased</option>
           <option value="other">Other</option>
         </select>
-
-        <label>Quantity change (use negative to subtract)</label>
+        <label>Quantity change (negative to subtract)</label>
         <input type="number" id="log-qty-change" value="-1" />
-
         <label>Note (optional)</label>
         <input type="text" id="log-note" placeholder="e.g. Lost during pool test" />
-
-        <button id="log-save" class="btn-primary">Log change</button>
+        <button id="log-save" class="btn-primary" style="margin-top:10px">Log change</button>
       </div>
-
       <h4 class="history-heading">Past changes</h4>
       <div id="history-list" class="history-list"></div>
-
       <div class="modal-actions">
         <button id="history-close" class="btn-outline">Close</button>
       </div>
     </div>
   </div>
 
-  <!-- Import format guide modal -->
   <div id="import-guide-modal" class="modal hidden">
     <div class="modal-content import-guide-content">
       <div class="import-guide-header">
@@ -431,7 +672,6 @@
           <p class="import-guide-sub">Make sure your file matches the format below before uploading.</p>
         </div>
       </div>
-
       <div class="import-guide-columns">
         <div class="import-col-row import-col-header-row">
           <span>Column name</span><span>Type</span><span>Required</span><span>Notes</span>
@@ -461,7 +701,6 @@
           <span class="import-col-note">Whole number, e.g. 3</span>
         </div>
       </div>
-
       <div class="import-guide-sample-label">Sample row</div>
       <div class="import-table-wrap">
         <table class="import-table">
@@ -469,9 +708,7 @@
           <tbody><tr><td>BlueESC Thruster</td><td>mechanism</td><td>Propulsion</td><td>4</td></tr></tbody>
         </table>
       </div>
-
-      <p class="import-guide-note">Column names are case-insensitive. Extra columns are ignored. Accepted formats: <strong>.xlsx</strong>, <strong>.xls</strong>, <strong>.csv</strong></p>
-
+      <p class="import-guide-note">Column names are case-insensitive. Extra columns are ignored. Accepted: <strong>.xlsx</strong>, <strong>.xls</strong>, <strong>.csv</strong></p>
       <div class="modal-actions">
         <button id="import-guide-cancel" class="btn-outline">Cancel</button>
         <button id="import-guide-choose" class="btn-primary">Choose File</button>
@@ -479,7 +716,6 @@
     </div>
   </div>
 
-  <!-- Import preview modal -->
   <div id="import-modal" class="modal hidden">
     <div class="modal-content import-modal-content">
       <h3>Import Inventory from Excel</h3>
@@ -497,5 +733,60 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script type="module" src="app.js"></script>
+
+  <script>
+    /* ── Nav scroll effect ── */
+    const nav = document.getElementById('main-nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('nav--scrolled', window.scrollY > 40);
+    }, { passive: true });
+
+    /* ── Mobile nav toggle ── */
+    const toggle = document.getElementById('nav-toggle');
+    const menu = document.getElementById('nav-menu');
+    toggle.addEventListener('click', () => {
+      const open = menu.classList.toggle('nav-menu--open');
+      toggle.setAttribute('aria-expanded', open);
+    });
+    menu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        menu.classList.remove('nav-menu--open');
+        toggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    /* ── Scroll reveal ── */
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('revealed');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    /* ── Animated counters ── */
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const el = e.target;
+          const target = parseInt(el.dataset.target, 10);
+          const duration = 1600;
+          const start = performance.now();
+          const tick = (now) => {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            el.textContent = Math.round(eased * target);
+            if (progress < 1) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+          counterObserver.unobserve(el);
+        }
+      });
+    }, { threshold: 0.5 });
+    document.querySelectorAll('.metric-number').forEach(el => counterObserver.observe(el));
+  </script>
 </body>
 </html>

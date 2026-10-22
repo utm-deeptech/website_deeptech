@@ -68,10 +68,27 @@ const historyList = document.getElementById("history-list");
 const historyClose = document.getElementById("history-close");
 
 // ===== Auth =====
+const ALLOWED_EMAIL_DOMAINS = ["@utm.my", "@graduate.utm.my"];
+
+function isAllowedEmail(email) {
+  if (!email) return false;
+  return ALLOWED_EMAIL_DOMAINS.some(domain => email.toLowerCase().endsWith(domain));
+}
+
 loginBtn.addEventListener("click", async () => {
   const provider = new GoogleAuthProvider();
+  provider.setCustomParameters({ hd: "utm.my" });
   try {
-    await signInWithPopup(auth, provider);
+    const result = await signInWithPopup(auth, provider);
+    const email = result.user?.email || "";
+    if (!isAllowedEmail(email)) {
+      await signOut(auth);
+      alert(
+        `Only UTM emails are allowed (${ALLOWED_EMAIL_DOMAINS.join(" or ")}).\n\n` +
+        `You signed in with: ${email}`
+      );
+      return;
+    }
   } catch (err) {
     alert("Login failed: " + err.message);
   }
@@ -86,6 +103,12 @@ function getFirstName(user) {
 
 onAuthStateChanged(auth, async (user) => {
   if (user) {
+    if (!isAllowedEmail(user.email || "")) {
+      await signOut(auth);
+      alert(`Access restricted to UTM emails only. You were signed out.`);
+      return;
+    }
+
     currentUser = user;
     loginBtn.classList.add("hidden");
     logoutBtn.classList.remove("hidden");
@@ -176,6 +199,7 @@ function renderInventory() {
         <h3>Members only</h3>
         <p>Sign in to view the club inventory.</p>
         <button class="btn-primary" onclick="document.getElementById('login-btn').click()">Sign in with Google</button>
+        <p class="inv-locked-hint">UTM emails only (@utm.my or @graduate.utm.my)</p>
       </div>
     `;
     return;
