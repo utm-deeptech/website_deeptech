@@ -4,8 +4,8 @@ import {
   getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
 import {
-  getFirestore, collection, doc, getDoc, setDoc, addDoc, updateDoc,
-  deleteDoc, onSnapshot, query, orderBy, serverTimestamp
+  getFirestore, collection, doc, getDoc, setDoc, onSnapshot,
+  query, orderBy, serverTimestamp, writeBatch, increment
 } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -21,14 +21,31 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+const DEPARTMENTS = ["programming", "electronics", "mechanism"];
+const DEFAULT_MIN_QTY = 2;
+
 // ===== State =====
 let currentUser = null;
 let currentRole = null;
 let currentDepartment = null;
 let currentFilter = "all";
+let currentLocation = "all";
+let currentCategory = "all";
+let searchText = "";
+let sortKey = "name";
+let viewMode = "cards";
+let showArchived = false;
 let allItems = [];
 let editingItemId = null;
 let historyItemId = null;
+let movingItemId = null;
+let editingBaseQty = 0;
+let unsubscribeItems = null;
+let unsubscribeHistory = null;
+
+try {
+  viewMode = localStorage.getItem("inv-view") === "table" ? "table" : "cards";
+} catch (e) { /* storage unavailable: keep the default */ }
 
 // ===== DOM elements =====
 const loginBtn = document.getElementById("login-btn");
@@ -40,8 +57,17 @@ const deptTabs = document.getElementById("dept-tabs");
 const navInventoryLink = document.getElementById("nav-inventory-link");
 const heroInventoryBtn = document.getElementById("hero-inventory-btn");
 const inventoryToolbar = document.querySelector(".inventory-toolbar");
+const inventoryFilters = document.getElementById("inventory-filters");
 const statItemsCell = document.getElementById("stat-items-cell");
 const statLowCell = document.getElementById("stat-low-cell");
+
+const searchInput = document.getElementById("inv-search");
+const locationFilter = document.getElementById("inv-location");
+const categoryFilter = document.getElementById("inv-category");
+const sortSelect = document.getElementById("inv-sort");
+const viewToggle = document.getElementById("view-toggle");
+const archivedLabel = document.getElementById("inv-archived-label");
+const archivedToggle = document.getElementById("inv-archived");
 
 const importBtn = document.getElementById("import-inventory-btn");
 const importFileInput = document.getElementById("import-file-input");
@@ -54,8 +80,22 @@ const itemNameInput = document.getElementById("item-name");
 const itemDeptInput = document.getElementById("item-dept");
 const itemCategoryInput = document.getElementById("item-category");
 const itemQtyInput = document.getElementById("item-qty");
+const itemMinQtyInput = document.getElementById("item-minqty");
+const itemLocationInput = document.getElementById("item-location");
+const locationOptions = document.getElementById("location-options");
+
+const itemNotesInput = document.getElementById("item-notes");
 const modalCancel = document.getElementById("modal-cancel");
 const modalSave = document.getElementById("modal-save");
+
+const moveModal = document.getElementById("move-modal");
+const moveItemName = document.getElementById("move-item-name");
+const moveCurrent = document.getElementById("move-current");
+const moveAction = document.getElementById("move-action");
+const moveQty = document.getElementById("move-qty");
+const moveNote = document.getElementById("move-note");
+const moveCancel = document.getElementById("move-cancel");
+const moveSave = document.getElementById("move-save");
 
 const historyModal = document.getElementById("history-modal");
 const historyItemName = document.getElementById("history-item-name");
@@ -110,6 +150,7 @@ onAuthStateChanged(auth, async (user) => {
     }
 
     currentUser = user;
+    document.body.classList.add("signed-in");
     loginBtn.classList.add("hidden");
     logoutBtn.classList.remove("hidden");
     userInfo.textContent = getFirstName(user);
@@ -120,21 +161,34 @@ onAuthStateChanged(auth, async (user) => {
     statLowCell.classList.remove("hidden");
     exportBtn.classList.remove("hidden");
 
-    await loadUserRole(user);
-
-    if (currentRole === "admin" || currentRole === "lead") {
-      addItemBtn.classList.remove("hidden");
-      importBtn.classList.remove("hidden");
+    try {
+      await loadUserRole(user);
+    } catch (err) {
+      console.error("Could not load your role, continuing as a member:", err);
+      currentRole = "member";
     }
+
+    addItemBtn.classList.remove("hidden");
+    if (isEditorRole()) {
+      importBtn.classList.remove("hidden");
+      archivedLabel.classList.remove("hidden");
+    }
+    startItemsListener();
   } else {
+    stopItemsListener();
+    allItems = [];
     currentUser = null;
+    document.body.classList.remove("signed-in");
     currentRole = null;
     currentDepartment = null;
+    showArchived = false;
+    archivedToggle.checked = false;
     loginBtn.classList.remove("hidden");
     logoutBtn.classList.add("hidden");
     userInfo.classList.add("hidden");
     addItemBtn.classList.add("hidden");
     importBtn.classList.add("hidden");
+    archivedLabel.classList.add("hidden");
     navInventoryLink.classList.add("hidden");
     heroInventoryBtn.classList.add("hidden");
     statItemsCell.classList.add("hidden");
@@ -143,6 +197,10 @@ onAuthStateChanged(auth, async (user) => {
   }
   renderInventory();
 });
+
+function isEditorRole() {
+  return currentRole === "admin" || currentRole === "lead";
+}
 
 async function loadUserRole(user) {
   const userRef = doc(db, "users", user.uid);
@@ -173,23 +231,170 @@ deptTabs.addEventListener("click", (e) => {
   renderInventory();
 });
 
-// ===== Inventory live listener =====
-const itemsCollection = collection(db, "items");
-onSnapshot(itemsCollection, (snapshot) => {
-  allItems = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+// ===== Filters, search, sort, view =====
+// Locations are free text. The filter and the suggestions list whatever people have typed so far.
+function knownLocations() {
+  const seen = new Map();
+  for (const i of allItems) {
+    const loc = (i.location || "").trim();
+    if (loc && !seen.has(loc.toLowerCase())) seen.set(loc.toLowerCase(), loc);
+  }
+  return [...seen.values()].sort((a, b) => a.localeCompare(b));
+}
+
+function renderLocationControls() {
+  const locs = knownLocations();
+  if (currentLocation !== "all" && currentLocation !== "none"
+      && !locs.some(l => l.toLowerCase() === currentLocation.toLowerCase())) {
+    currentLocation = "all";
+  }
+  locationFilter.innerHTML =
+    `<option value="all">All locations</option>` +
+    locs.map(l => `<option value="${escapeHtml(l)}">${escapeHtml(l)}</option>`).join("") +
+    `<option value="none">No location set</option>`;
+  locationFilter.value = currentLocation;
+  locationOptions.innerHTML = locs.map(l => `<option value="${escapeHtml(l)}"></option>`).join("");
+}
+searchInput.addEventListener("input", () => {
+  searchText = searchInput.value;
   renderInventory();
-  updateStats();
 });
 
+locationFilter.addEventListener("change", () => {
+  currentLocation = locationFilter.value;
+  renderInventory();
+});
+
+categoryFilter.addEventListener("change", () => {
+  currentCategory = categoryFilter.value;
+  renderInventory();
+});
+
+sortSelect.addEventListener("change", () => {
+  sortKey = sortSelect.value;
+  renderInventory();
+});
+
+archivedToggle.addEventListener("change", () => {
+  showArchived = archivedToggle.checked;
+  renderInventory();
+});
+
+viewToggle.addEventListener("click", (e) => {
+  const btn = e.target.closest("button[data-view]");
+  if (!btn) return;
+  viewMode = btn.dataset.view;
+  try { localStorage.setItem("inv-view", viewMode); } catch (err) { /* ignore */ }
+  renderInventory();
+});
+
+// ===== Inventory live listener =====
+const itemsCollection = collection(db, "items");
+
+function startItemsListener() {
+  stopItemsListener();
+  unsubscribeItems = onSnapshot(itemsCollection, (snapshot) => {
+    allItems = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderInventory();
+    updateStats();
+  }, (err) => {
+    console.error("Inventory listener failed:", err);
+    inventoryGrid.innerHTML = `<div class="loading">Could not load the inventory: ${escapeHtml(err.message)}</div>`;
+  });
+}
+
+function stopItemsListener() {
+  if (unsubscribeItems) unsubscribeItems();
+  unsubscribeItems = null;
+}
+
+function minQtyOf(item) {
+  return Number.isFinite(item.minQty) ? item.minQty : DEFAULT_MIN_QTY;
+}
+
+function stockStatus(item) {
+  const qty = item.quantity || 0;
+  if (qty === 0) return { cls: "status-out", text: "Out" };
+  if (qty <= minQtyOf(item)) return { cls: "status-low", text: "Low" };
+  return { cls: "status-ok", text: "In stock" };
+}
+
 function updateStats() {
-  document.getElementById("stat-items").textContent = allItems.length;
-  const lowOrOut = allItems.filter(i => (i.quantity || 0) <= 2).length;
-  document.getElementById("stat-low").textContent = lowOrOut;
+  const active = allItems.filter(i => !i.archived);
+  document.getElementById("stat-items").textContent = active.length;
+  document.getElementById("stat-low").textContent =
+    active.filter(i => (i.quantity || 0) <= minQtyOf(i)).length;
+}
+
+// Wherever the person who added the item said it is
+function locationLabel(item) {
+  return (item.location || "").trim();
+}
+function getVisibleItems() {
+  const q = searchText.trim().toLowerCase();
+
+  const items = allItems.filter(i => {
+    if (showArchived ? !i.archived : i.archived) return false;
+    if (currentFilter !== "all" && i.department !== currentFilter) return false;
+    const where = locationLabel(i).toLowerCase();
+    if (currentLocation === "none") {
+      if (where) return false;
+    } else if (currentLocation !== "all" && where !== currentLocation.toLowerCase()) {
+      return false;
+    }
+    if (currentCategory !== "all" && (i.category || "") !== currentCategory) return false;
+    if (q) {
+      const haystack = [i.name, i.category, i.department, i.notes, locationLabel(i)]
+        .join(" ").toLowerCase();
+      if (!haystack.includes(q)) return false;
+    }
+    return true;
+  });
+
+  const byName = (a, b) => (a.name || "").localeCompare(b.name || "");
+  const stamp = (i) => (i.updatedAt?.toMillis ? i.updatedAt.toMillis() : 0);
+  const sorters = {
+    name: byName,
+    "qty-asc": (a, b) => (a.quantity || 0) - (b.quantity || 0) || byName(a, b),
+    "qty-desc": (a, b) => (b.quantity || 0) - (a.quantity || 0) || byName(a, b),
+    recent: (a, b) => stamp(b) - stamp(a),
+    location: (a, b) => locationLabel(a).localeCompare(locationLabel(b)) || byName(a, b)
+  };
+  return items.sort(sorters[sortKey] || byName);
+}
+
+function renderCategoryOptions() {
+  const categories = [...new Set(allItems.map(i => (i.category || "").trim()).filter(Boolean))]
+    .sort((a, b) => a.localeCompare(b));
+  if (currentCategory !== "all" && !categories.includes(currentCategory)) currentCategory = "all";
+  categoryFilter.innerHTML =
+    `<option value="all">All categories</option>` +
+    categories.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("");
+  categoryFilter.value = currentCategory;
+}
+
+const PIN_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>`;
+
+function actionButtons(item) {
+  if (item.archived) {
+    return userCanEditItem(item)
+      ? `<button onclick="window.restoreItem('${item.id}')">Restore</button>`
+      : "";
+  }
+  const canEdit = userCanEditItem(item);
+  return `
+    <button onclick="window.openMove('${item.id}')" class="btn-take">Take / Return</button>
+    <button onclick="window.openHistory('${item.id}')">History</button>
+    ${canEdit ? `<button onclick="window.openEdit('${item.id}')">Edit</button>` : ""}
+    ${canEdit ? `<button onclick="window.archiveItem('${item.id}')" class="btn-danger">Archive</button>` : ""}
+  `;
 }
 
 function renderInventory() {
   if (!currentUser) {
     inventoryToolbar.classList.add("hidden");
+    inventoryFilters.classList.add("hidden");
+    inventoryGrid.className = "inventory-grid";
     inventoryGrid.innerHTML = `
       <div class="inv-locked">
         <svg class="inv-locked-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -205,42 +410,75 @@ function renderInventory() {
     return;
   }
   inventoryToolbar.classList.remove("hidden");
+  inventoryFilters.classList.remove("hidden");
 
-  const filtered = currentFilter === "all"
-    ? allItems
-    : allItems.filter(i => i.department === currentFilter);
+  renderLocationControls();
+  renderCategoryOptions();
+  viewToggle.querySelectorAll("button").forEach(b =>
+    b.classList.toggle("active", b.dataset.view === viewMode));
 
-  if (filtered.length === 0) {
-    inventoryGrid.innerHTML = `<div class="loading">No items yet${currentFilter !== "all" ? ` in ${currentFilter}` : ""}.</div>`;
+  const items = getVisibleItems();
+
+  if (items.length === 0) {
+    inventoryGrid.className = "inventory-grid";
+    const filtered = searchText || currentFilter !== "all" || currentLocation !== "all" || currentCategory !== "all";
+    inventoryGrid.innerHTML = `<div class="loading">${
+      showArchived ? "No archived items." : filtered ? "No items match your filters." : "No items yet."
+    }</div>`;
     return;
   }
 
-  inventoryGrid.innerHTML = filtered.map(item => {
-    const qty = item.quantity || 0;
-    let statusClass = "status-ok", statusText = "In stock";
-    if (qty === 0) { statusClass = "status-out"; statusText = "Out"; }
-    else if (qty <= 2) { statusClass = "status-low"; statusText = "Low"; }
+  if (viewMode === "table") {
+    inventoryGrid.className = "inventory-table-wrap";
+    inventoryGrid.innerHTML = `
+      <table class="inv-table">
+        <thead>
+          <tr><th>Item</th><th>Department</th><th>Location</th><th>Qty</th><th>Status</th><th></th></tr>
+        </thead>
+        <tbody>
+          ${items.map(item => {
+            const st = stockStatus(item);
+            const loc = locationLabel(item);
+            return `
+              <tr>
+                <td><div class="inv-name">${escapeHtml(item.name)}</div>
+                    <div class="inv-sub">${escapeHtml(item.category || "—")} · added by ${escapeHtml(getItemCreatorName(item))}</div></td>
+                <td>${capitalize(item.department)}</td>
+                <td>${loc ? escapeHtml(loc) : `<span class="inv-muted">Not set</span>`}</td>
+                <td class="inv-num">${item.quantity || 0}</td>
+                <td><span class="inv-status ${st.cls}">${st.text}</span></td>
+                <td><div class="inv-row-actions">${actionButtons(item)}</div></td>
+              </tr>`;
+          }).join("")}
+        </tbody>
+      </table>`;
+    return;
+  }
 
-    const canEdit = userCanEditItem(item);
+  inventoryGrid.className = "inventory-grid";
+  inventoryGrid.innerHTML = items.map(item => {
+    const qty = item.quantity || 0;
+    const st = stockStatus(item);
     const editorName = getItemEditorName(item);
     const editorDate = formatTimestamp(item.updatedAt || item.createdAt);
+    const createdDate = formatTimestamp(item.createdAt);
+    const loc = locationLabel(item);
 
     return `
-      <div class="inv-card">
+      <div class="inv-card${item.archived ? " inv-card--archived" : ""}">
         <div class="inv-card-header">
           <div class="inv-name">${escapeHtml(item.name)}</div>
-          <span class="inv-status ${statusClass}">${statusText}</span>
+          <span class="inv-status ${st.cls}">${st.text}</span>
         </div>
         <div class="inv-dept">${capitalize(item.department)} · ${escapeHtml(item.category || "—")}</div>
+        <div class="inv-loc${loc ? "" : " inv-loc--unset"}">${PIN_ICON} ${loc ? escapeHtml(loc) : "Location not set"}</div>
+        ${item.notes ? `<div class="inv-notes">${escapeHtml(item.notes)}</div>` : ""}
         <div class="inv-qty">Qty: <span>${qty}</span></div>
         <div class="inv-editor">
+          Added by <span>${escapeHtml(getItemCreatorName(item))}</span>${createdDate ? ` · ${escapeHtml(createdDate)}` : ""}<br>
           Last edited by <span>${escapeHtml(editorName)}</span>${editorDate ? ` · ${escapeHtml(editorDate)}` : ""}
         </div>
-        <div class="inv-actions">
-          <button onclick="window.openHistory('${item.id}')">History</button>
-          ${canEdit ? `<button onclick="window.openEdit('${item.id}')">Edit</button>` : ""}
-          ${canEdit ? `<button onclick="window.deleteItem('${item.id}')" class="btn-danger">Delete</button>` : ""}
-        </div>
+        <div class="inv-actions">${actionButtons(item)}</div>
       </div>
     `;
   }).join("");
@@ -265,14 +503,22 @@ function openItemModal(itemId) {
     itemDeptInput.value = item.department;
     itemCategoryInput.value = item.category || "";
     itemQtyInput.value = item.quantity || 0;
+    editingBaseQty = item.quantity || 0;
+    itemMinQtyInput.value = minQtyOf(item);
+    itemLocationInput.value = locationLabel(item);
+    itemNotesInput.value = item.notes || "";
   } else {
     modalTitle.textContent = "Add item";
     itemNameInput.value = "";
     itemDeptInput.value = currentRole === "lead" ? currentDepartment : "programming";
     itemCategoryInput.value = "";
     itemQtyInput.value = 0;
+    itemMinQtyInput.value = DEFAULT_MIN_QTY;
+    itemLocationInput.value = "";
+    itemNotesInput.value = "";
   }
-  itemDeptInput.disabled = currentRole === "lead";
+  // a lead can't move an existing item to another department; adding a new one is open to everyone
+  itemDeptInput.disabled = Boolean(itemId) && currentRole === "lead";
   itemModal.classList.remove("hidden");
 }
 
@@ -283,47 +529,46 @@ modalSave.addEventListener("click", async () => {
   const department = itemDeptInput.value;
   const category = itemCategoryInput.value.trim();
   const quantity = parseInt(itemQtyInput.value) || 0;
+  const minQty = Math.max(0, parseInt(itemMinQtyInput.value) || 0);
+  const location = itemLocationInput.value.trim();
+  const notes = itemNotesInput.value.trim();
 
   if (!name) { alert("Item name is required"); return; }
+  if (quantity < 0) { alert("Quantity cannot be negative"); return; }
+
+  const fields = { name, department, category, quantity, minQty, location, notes };
 
   try {
     const userIdentity = getCurrentUserIdentity();
     if (editingItemId) {
-      const oldItem = allItems.find(i => i.id === editingItemId);
-      await updateDoc(doc(db, "items", editingItemId), {
-        name, department, category, quantity,
-        updatedAt: serverTimestamp(),
-        updatedBy: userIdentity.email,
-        updatedByUid: userIdentity.uid,
-        updatedByName: userIdentity.name,
-        updatedByEmail: userIdentity.email
+      // The quantity is saved as a change from what the form opened with, in one batch with
+      // its history entry, so stock someone took while the form was open is not overwritten.
+      const { quantity: _ignored, ...rest } = fields;
+      const delta = quantity - editingBaseQty;
+      const batch = writeBatch(db);
+      batch.update(doc(db, "items", editingItemId), {
+        ...rest,
+        ...(delta !== 0 ? { quantity: increment(delta) } : {}),
+        ...editorStamp(userIdentity)
       });
-      if (oldItem && oldItem.quantity !== quantity) {
-        await addLog(editingItemId, {
+      if (delta !== 0) {
+        batch.set(newLogRef(editingItemId), logData(userIdentity, {
           reason: "edit",
-          qtyChange: quantity - (oldItem.quantity || 0),
+          qtyChange: delta,
           note: "Quantity updated via edit"
-        });
+        }));
       }
+      await batch.commit();
     } else {
-      const newDoc = await addDoc(itemsCollection, {
-        name, department, category, quantity,
-        createdAt: serverTimestamp(),
-        createdBy: userIdentity.email,
-        createdByUid: userIdentity.uid,
-        createdByName: userIdentity.name,
-        createdByEmail: userIdentity.email,
-        updatedAt: serverTimestamp(),
-        updatedBy: userIdentity.email,
-        updatedByUid: userIdentity.uid,
-        updatedByName: userIdentity.name,
-        updatedByEmail: userIdentity.email
-      });
-      await addLog(newDoc.id, {
+      const itemRef = doc(itemsCollection);
+      const batch = writeBatch(db);
+      batch.set(itemRef, newItemData(fields, userIdentity));
+      batch.set(newLogRef(itemRef.id), logData(userIdentity, {
         reason: "purchased",
         qtyChange: quantity,
         note: "Item added to inventory"
-      });
+      }));
+      await batch.commit();
     }
     itemModal.classList.add("hidden");
   } catch (err) {
@@ -331,18 +576,127 @@ modalSave.addEventListener("click", async () => {
   }
 });
 
+function newItemData(fields, userIdentity) {
+  return {
+    ...fields,
+    archived: false,
+    createdAt: serverTimestamp(),
+    createdBy: userIdentity.email,
+    createdByUid: userIdentity.uid,
+    createdByName: userIdentity.name,
+    createdByEmail: userIdentity.email,
+    updatedAt: serverTimestamp(),
+    updatedBy: userIdentity.email,
+    updatedByUid: userIdentity.uid,
+    updatedByName: userIdentity.name,
+    updatedByEmail: userIdentity.email
+  };
+}
+
+function editorStamp(userIdentity) {
+  return {
+    updatedAt: serverTimestamp(),
+    updatedBy: userIdentity.email,
+    updatedByUid: userIdentity.uid,
+    updatedByName: userIdentity.name,
+    updatedByEmail: userIdentity.email
+  };
+}
+
 window.openEdit = (id) => openItemModal(id);
 
-window.deleteItem = async (id) => {
-  if (!confirm("Delete this item? This cannot be undone.")) return;
+// Items are archived instead of deleted, so their history is never orphaned
+async function setArchived(id, archived) {
+  const item = allItems.find(i => i.id === id);
+  if (!item) return;
+  const userIdentity = getCurrentUserIdentity();
+  const batch = writeBatch(db);
+  batch.update(doc(db, "items", id), { archived, ...editorStamp(userIdentity) });
+  batch.set(newLogRef(id), logData(userIdentity, {
+    reason: archived ? "archived" : "restored",
+    qtyChange: 0,
+    note: ""
+  }));
+  await batch.commit();
+}
+
+window.archiveItem = async (id) => {
+  if (!confirm("Archive this item? It will be hidden from the inventory, and can be restored later.")) return;
   try {
-    await deleteDoc(doc(db, "items", id));
+    await setArchived(id, true);
   } catch (err) {
-    alert("Delete failed: " + err.message);
+    alert("Archive failed: " + err.message);
   }
 };
 
+window.restoreItem = async (id) => {
+  try {
+    await setArchived(id, false);
+  } catch (err) {
+    alert("Restore failed: " + err.message);
+  }
+};
+
+// ===== Take / return stock (any signed-in member) =====
+window.openMove = (id) => {
+  const item = allItems.find(i => i.id === id);
+  if (!item) return;
+  movingItemId = id;
+  moveItemName.textContent = item.name;
+  const loc = locationLabel(item);
+  moveCurrent.textContent = `In stock: ${item.quantity || 0}${loc ? ` · ${loc}` : ""}`;
+  moveAction.value = "take";
+  moveQty.value = 1;
+  moveNote.value = "";
+  moveModal.classList.remove("hidden");
+};
+
+moveCancel.addEventListener("click", () => moveModal.classList.add("hidden"));
+
+moveSave.addEventListener("click", async () => {
+  const item = allItems.find(i => i.id === movingItemId);
+  if (!item) return;
+  const qty = parseInt(moveQty.value);
+  if (!Number.isInteger(qty) || qty < 1) { alert("Enter a quantity of 1 or more."); return; }
+  const taking = moveAction.value === "take";
+  if (taking && qty > (item.quantity || 0)) {
+    alert(`Only ${item.quantity || 0} in stock.`);
+    return;
+  }
+  if (taking && !moveNote.value.trim()) {
+    alert("Add a short note on what it is for, so others know where it went.");
+    return;
+  }
+
+  const change = taking ? -qty : qty;
+  moveSave.disabled = true;
+  try {
+    await applyStockChange(movingItemId, change, taking ? "checkout" : "return", moveNote.value.trim());
+    moveModal.classList.add("hidden");
+  } catch (err) {
+    alert(err.code === "permission-denied"
+      ? "Could not save. Someone may have just taken the same stock. Close this, check the quantity, and try again."
+      : "Could not save: " + err.message);
+  } finally {
+    moveSave.disabled = false;
+  }
+});
+
+// Quantity change + its history entry in one atomic batch (increment avoids lost updates)
+async function applyStockChange(itemId, qtyChange, reason, note) {
+  const userIdentity = getCurrentUserIdentity();
+  const batch = writeBatch(db);
+  batch.update(doc(db, "items", itemId), {
+    quantity: increment(qtyChange),
+    ...editorStamp(userIdentity)
+  });
+  batch.set(newLogRef(itemId), logData(userIdentity, { reason, qtyChange, note }));
+  await batch.commit();
+}
+
 // ===== History / change log =====
+const REASON_LABELS = { checkout: "taken", return: "returned", edit: "edited", purchased: "added / purchased" };
+
 window.openHistory = async (itemId) => {
   historyItemId = itemId;
   const item = allItems.find(i => i.id === itemId);
@@ -359,10 +713,11 @@ window.openHistory = async (itemId) => {
 };
 
 function loadHistory(itemId) {
+  if (unsubscribeHistory) unsubscribeHistory();
   historyList.innerHTML = `<div class="history-empty">Loading...</div>`;
   const logsRef = collection(db, "items", itemId, "logs");
   const q = query(logsRef, orderBy("timestamp", "desc"));
-  onSnapshot(q, (snap) => {
+  unsubscribeHistory = onSnapshot(q, (snap) => {
     if (snap.empty) {
       historyList.innerHTML = `<div class="history-empty">No history yet.</div>`;
       return;
@@ -379,14 +734,16 @@ function loadHistory(itemId) {
       return `
         <div class="history-row">
           <div class="history-row-top">
-            <span class="history-reason">${escapeHtml(log.reason)}</span>
-            <span class="history-qty ${qtyClass}">${qtySign}${qty}</span>
+            <span class="history-reason">${escapeHtml(REASON_LABELS[log.reason] || log.reason)}</span>
+            <span class="history-qty ${qty === 0 ? "" : qtyClass}">${qty === 0 ? "" : qtySign + qty}</span>
           </div>
           <div class="history-meta">${escapeHtml(actor)} · ${date}</div>
           ${log.note ? `<div class="history-note">"${escapeHtml(log.note)}"</div>` : ""}
         </div>
       `;
     }).join("");
+  }, (err) => {
+    historyList.innerHTML = `<div class="history-empty">Could not load history: ${escapeHtml(err.message)}</div>`;
   });
 }
 
@@ -395,20 +752,15 @@ logSaveBtn.addEventListener("click", async () => {
   const qtyChange = parseInt(logQtyChange.value) || 0;
   const note = logNote.value.trim();
 
+  if (qtyChange === 0) { alert("Enter a quantity change other than 0."); return; }
+
   try {
     const item = allItems.find(i => i.id === historyItemId);
-    const newQty = Math.max(0, (item.quantity || 0) + qtyChange);
-    const userIdentity = getCurrentUserIdentity();
-    await updateDoc(doc(db, "items", historyItemId), {
-      quantity: newQty,
-      updatedAt: serverTimestamp(),
-      updatedBy: userIdentity.email,
-      updatedByUid: userIdentity.uid,
-      updatedByName: userIdentity.name,
-      updatedByEmail: userIdentity.email
-    });
-
-    await addLog(historyItemId, { reason, qtyChange, note });
+    if ((item.quantity || 0) + qtyChange < 0) {
+      alert(`Only ${item.quantity || 0} in stock; that would go below zero.`);
+      return;
+    }
+    await applyStockChange(historyItemId, qtyChange, reason, note);
 
     logQtyChange.value = -1;
     logNote.value = "";
@@ -417,10 +769,12 @@ logSaveBtn.addEventListener("click", async () => {
   }
 });
 
-async function addLog(itemId, { reason, qtyChange, note }) {
-  const logsRef = collection(db, "items", itemId, "logs");
-  const userIdentity = getCurrentUserIdentity();
-  await addDoc(logsRef, {
+function newLogRef(itemId) {
+  return doc(collection(db, "items", itemId, "logs"));
+}
+
+function logData(userIdentity, { reason, qtyChange, note }) {
+  return {
     reason,
     qtyChange,
     note: note || "",
@@ -429,10 +783,15 @@ async function addLog(itemId, { reason, qtyChange, note }) {
     userName: userIdentity.name,
     userEmail: userIdentity.email,
     timestamp: serverTimestamp()
-  });
+  };
 }
 
-historyClose.addEventListener("click", () => historyModal.classList.add("hidden"));
+
+historyClose.addEventListener("click", () => {
+  if (unsubscribeHistory) unsubscribeHistory();
+  unsubscribeHistory = null;
+  historyModal.classList.add("hidden");
+});
 
 // ===== Export inventory =====
 const exportBtn = document.getElementById("export-inventory-btn");
@@ -471,7 +830,17 @@ async function exportInventory() {
       alert('No inventory items to export.');
       return;
     }
-    const csv = arrayToCSV(allItems);
+    // Same columns the importer reads, so an export can be edited and re-imported
+    const rows = allItems.filter(i => !i.archived).map(i => ({
+      name: i.name,
+      department: i.department,
+      category: i.category || "",
+      quantity: i.quantity || 0,
+      minQty: minQtyOf(i),
+      location: locationLabel(i),
+      notes: i.notes || ""
+    }));
+    const csv = arrayToCSV(rows);
     const date = new Date().toISOString().split('T')[0];
     downloadCSV(csv, `deeptech-inventory-${date}.csv`);
   } catch (err) {
@@ -508,8 +877,54 @@ importFileInput.addEventListener("change", (e) => {
   reader.readAsArrayBuffer(file);
 });
 
-function normalise(row, key) {
-  return row[key] || row[key.charAt(0).toUpperCase() + key.slice(1)] || "";
+// Lower-case, trimmed column names so "Name", "NAME" and " name " all work
+function normaliseRow(row) {
+  const out = {};
+  for (const key of Object.keys(row)) out[key.trim().toLowerCase()] = row[key];
+  return out;
+}
+
+// Parses every row, marking any that already exist (same name + department) or repeat in the file
+function parseImportRows(rows) {
+  const seen = new Set(allItems.filter(i => !i.archived)
+    .map(i => `${i.department}|${(i.name || "").trim().toLowerCase()}`));
+  return rows.map(raw => {
+    const parsed = parseImportRow(raw);
+    if (!parsed.fields) return parsed;
+    const key = `${parsed.fields.department}|${parsed.fields.name.toLowerCase()}`;
+    if (seen.has(key)) return { error: `"${parsed.fields.name}": already in the inventory` };
+    seen.add(key);
+    return parsed;
+  });
+}
+
+// Turns a spreadsheet row into an item, or explains why it can't be imported
+function parseImportRow(rawRow) {
+  const row = normaliseRow(rawRow);
+  const name = String(row.name || "").trim();
+  const department = String(row.department || "").trim().toLowerCase();
+  const quantity = Number(row.quantity);
+  const minQtyRaw = row.minqty === "" || row.minqty === undefined ? DEFAULT_MIN_QTY : Number(row.minqty);
+
+  if (!name) return { error: "missing name" };
+  if (!DEPARTMENTS.includes(department)) return { error: `"${name}": unknown department "${row.department}"` };
+  if (currentRole === "lead" && department !== currentDepartment) {
+    return { error: `"${name}": you can only import into ${currentDepartment}` };
+  }
+  if (!Number.isInteger(quantity) || quantity < 0) return { error: `"${name}": quantity must be a whole number` };
+  if (!Number.isInteger(minQtyRaw) || minQtyRaw < 0) return { error: `"${name}": minQty must be a whole number` };
+
+  return {
+    fields: {
+      name,
+      department,
+      category: String(row.category || "").trim(),
+      quantity,
+      minQty: minQtyRaw,
+      location: String(row.location || "").trim(),
+      notes: String(row.notes || "").trim()
+    }
+  };
 }
 
 function showImportPreview(rows) {
@@ -518,12 +933,20 @@ function showImportPreview(rows) {
   const previewRows = rows.slice(0, 50);
   const table = document.getElementById("import-preview-table");
   table.innerHTML =
-    `<thead><tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr></thead>` +
+    `<thead><tr>${headers.map(h => `<th>${escapeHtml(h)}</th>`).join("")}</tr></thead>` +
     `<tbody>${previewRows.map(row =>
-      `<tr>${headers.map(h => `<td>${row[h]}</td>`).join("")}</tr>`
+      `<tr>${headers.map(h => `<td>${escapeHtml(row[h])}</td>`).join("")}</tr>`
     ).join("")}</tbody>`;
-  document.getElementById("import-count").textContent =
-    `${rows.length} item(s) ready to import${rows.length > 50 ? " (showing first 50 in preview)" : ""}.`;
+
+  const parsed = parseImportRows(rows);
+  const problems = parsed.filter(p => p.error).map(p => p.error);
+  const valid = parsed.length - problems.length;
+  document.getElementById("import-count").innerHTML =
+    `${valid} of ${rows.length} item(s) ready to import${rows.length > 50 ? " (preview shows the first 50)" : ""}.` +
+    (problems.length
+      ? `<br><span class="import-problems">${problems.length} row(s) will be skipped:<br>${
+          problems.slice(0, 8).map(escapeHtml).join("<br>")}${problems.length > 8 ? "<br>…" : ""}</span>`
+      : "");
   document.getElementById("import-confirm-btn")._pendingRows = rows;
   importModal.classList.remove("hidden");
 }
@@ -532,34 +955,53 @@ document.getElementById("import-cancel-btn").addEventListener("click", () => {
   importModal.classList.add("hidden");
 });
 
+// Firestore rules allow ~20 document lookups per batch, and each imported item costs
+// one for its history entry, so rows are committed in small chunks.
+const IMPORT_CHUNK = 8;
+
 document.getElementById("import-confirm-btn").addEventListener("click", async () => {
   const confirmBtn = document.getElementById("import-confirm-btn");
   const rows = confirmBtn._pendingRows;
   if (!rows || !rows.length) return;
   confirmBtn.disabled = true;
   confirmBtn.textContent = "Importing…";
+
+  const parsed = parseImportRows(rows);
+  const valid = parsed.filter(p => p.fields).map(p => p.fields);
+  const skipped = parsed.length - valid.length;
+  const userIdentity = getCurrentUserIdentity();
   let imported = 0;
-  for (const row of rows) {
+  let failed = 0;
+
+  for (let i = 0; i < valid.length; i += IMPORT_CHUNK) {
+    const chunk = valid.slice(i, i + IMPORT_CHUNK);
+    const batch = writeBatch(db);
+    for (const fields of chunk) {
+      const itemRef = doc(itemsCollection);
+      batch.set(itemRef, newItemData(fields, userIdentity));
+      batch.set(newLogRef(itemRef.id), logData(userIdentity, {
+        reason: "purchased",
+        qtyChange: fields.quantity,
+        note: "Imported from spreadsheet"
+      }));
+    }
     try {
-      await addDoc(itemsCollection, {
-        name:       String(normalise(row, "name")),
-        department: String(normalise(row, "department")),
-        category:   String(normalise(row, "category")),
-        quantity:   Number(normalise(row, "quantity")) || 0,
-        createdAt:  serverTimestamp(),
-        updatedAt:  serverTimestamp(),
-        createdBy:  currentUser.uid,
-        createdByName: currentUser.displayName || currentUser.email
-      });
-      imported++;
+      await batch.commit();
+      imported += chunk.length;
     } catch (err) {
-      console.error("Failed to import row:", err);
+      console.error("Import chunk failed:", err);
+      failed += chunk.length;
     }
   }
+
   importModal.classList.add("hidden");
   confirmBtn.disabled = false;
   confirmBtn.textContent = "Import All";
-  alert(`Successfully imported ${imported} item(s).`);
+  alert(
+    `Imported ${imported} item(s).` +
+    (skipped ? `\nSkipped ${skipped} invalid row(s).` : "") +
+    (failed ? `\n${failed} item(s) failed to save (see the browser console).` : "")
+  );
 });
 
 // ===== Active nav link on scroll =====
@@ -578,7 +1020,7 @@ allSections.forEach(s => sectionObserver.observe(s));
 
 // ===== Helpers =====
 function escapeHtml(str) {
-  if (!str) return "";
+  if (str === null || str === undefined || str === "") return "";
   return String(str).replace(/[&<>"']/g, m => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
   }[m]));
@@ -600,6 +1042,13 @@ function getCurrentUserIdentity() {
     name: currentUser.displayName || email || "Unknown user",
     email
   };
+}
+
+function getItemCreatorName(item) {
+  return item.createdByName
+    || item.createdByEmail
+    || item.createdBy
+    || "unknown";
 }
 
 function getItemEditorName(item) {

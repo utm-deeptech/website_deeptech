@@ -8,6 +8,13 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    // Signed in with a verified UTM Google account (same check the site does in the browser)
+    function isUtm() {
+      return isSignedIn()
+             && request.auth.token.email_verified == true
+             && request.auth.token.email.matches('.*@(graduate\\.)?utm\\.my');
+    }
+
     function getUserRole() {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
     }
@@ -27,17 +34,41 @@ service cloud.firestore {
     function recordsCreator() {
       return isSignedIn()
              && request.resource.data.createdByUid == request.auth.uid
-             && request.resource.data.updatedByUid == request.auth.uid;
+             && request.resource.data.createdByEmail == request.auth.token.email
+             && request.resource.data.updatedByUid == request.auth.uid
+             && request.resource.data.updatedByEmail == request.auth.token.email;
     }
 
     function recordsEditor() {
       return isSignedIn()
-             && request.resource.data.updatedByUid == request.auth.uid;
+             && request.resource.data.updatedByUid == request.auth.uid
+             && request.resource.data.updatedByEmail == request.auth.token.email;
     }
 
     function recordsLogUser() {
       return isSignedIn()
-             && request.resource.data.userUid == request.auth.uid;
+             && request.resource.data.userUid == request.auth.uid
+             && request.resource.data.userEmail == request.auth.token.email;
+    }
+
+    // A brand-new item must be well formed (any UTM member may add one)
+    function isValidNewItem() {
+      return request.resource.data.department in ['programming', 'electronics', 'mechanism']
+             && request.resource.data.name is string
+             && request.resource.data.name.size() > 0
+             && request.resource.data.quantity is int
+             && request.resource.data.quantity >= 0;
+    }
+
+    // Any UTM member may take or return stock, but may change nothing else on the item
+    function isStockChangeOnly() {
+      return isUtm()
+             && recordsEditor()
+             && request.resource.data.diff(resource.data).affectedKeys()
+                  .hasOnly(['quantity', 'updatedAt', 'updatedBy', 'updatedByUid',
+                            'updatedByName', 'updatedByEmail'])
+             && request.resource.data.quantity is int
+             && request.resource.data.quantity >= 0;
     }
 
     // Users collection
@@ -53,29 +84,49 @@ service cloud.firestore {
     }
 
     // Items collection
-    // - Anyone (even signed out) can read inventory
+    // - Only signed-in UTM members can read inventory
+    // - Any UTM member can add an item (the record keeps who added it)
     // - Admins can do everything
     // - Leads can only modify items in their own department
+    // - Any UTM member can take/return stock (quantity only)
     match /items/{itemId} {
-      allow read: if true;
-      allow create: if (isAdmin()
-                    || isLeadOf(request.resource.data.department))
-                    && recordsCreator();
-      allow update: if (isAdmin()
+      allow read: if isUtm();
+      allow create: if isUtm()
+                    && recordsCreator()
+                    && isValidNewItem();
+      allow update: if ((isAdmin()
                     || isLeadOf(resource.data.department))
-                    && recordsEditor();
+                    && recordsEditor())
+                    || isStockChangeOnly();
       allow delete: if isAdmin()
                     || isLeadOf(resource.data.department);
 
       // History logs (subcollection)
-      // - Anyone signed in can read history
-      // - Anyone with edit rights on the parent item can add logs
+      // - Anyone signed in with a UTM account can read history
+      // - Admins and leads of the item's department can add any log
+      // - Other members can only add checkout/return logs, and only in the same
+      //   batch as the matching quantity change (getAfter vs get), or the first
+      //   'purchased' entry written in the same batch that creates the item
       // - Logs cannot be edited or deleted (audit trail)
       match /logs/{logId} {
-        allow read: if isSignedIn();
-        allow create: if (isAdmin()
-                      || isLeadOf(get(/databases/$(database)/documents/items/$(itemId)).data.department))
-                      && recordsLogUser();
+        allow read: if isUtm();
+        allow create: if ((isAdmin()
+                      || isLeadOf(getAfter(/databases/$(database)/documents/items/$(itemId)).data.department))
+                      && recordsLogUser())
+                      || (isUtm()
+                      && recordsLogUser()
+                      && request.resource.data.reason in ['checkout', 'return']
+                      && getAfter(/databases/$(database)/documents/items/$(itemId)).data.quantity
+                         == get(/databases/$(database)/documents/items/$(itemId)).data.quantity
+                            + request.resource.data.qtyChange)
+                      || (isUtm()
+                      && recordsLogUser()
+                      && request.resource.data.reason == 'purchased'
+                      && !exists(/databases/$(database)/documents/items/$(itemId))
+                      && existsAfter(/databases/$(database)/documents/items/$(itemId))
+                      && getAfter(/databases/$(database)/documents/items/$(itemId)).data.createdByUid == request.auth.uid
+                      && request.resource.data.qtyChange
+                         == getAfter(/databases/$(database)/documents/items/$(itemId)).data.quantity);
         allow update, delete: if false;
       }
     }
