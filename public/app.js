@@ -117,7 +117,9 @@ function isAllowedEmail(email) {
 
 loginBtn.addEventListener("click", async () => {
   const provider = new GoogleAuthProvider();
-  provider.setCustomParameters({ hd: "utm.my" });
+  // No "hd" hint: it only accepts @utm.my and locks out @graduate.utm.my students.
+  // The domain check below enforces both allowed domains.
+  provider.setCustomParameters({ prompt: "select_account" });
   try {
     const result = await signInWithPopup(auth, provider);
     const email = result.user?.email || "";
