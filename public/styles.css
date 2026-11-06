@@ -40,6 +40,7 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 68px; /* keep section headings clear of the fixed nav */
   -webkit-text-size-adjust: 100%;
 }
 
@@ -202,11 +203,23 @@ h1, h2, h3, h4 {
   left: 0;
   right: 0;
   z-index: 100;
-  transition: background 0.3s ease, box-shadow 0.3s ease, backdrop-filter 0.3s ease;
 }
 
-.nav--scrolled {
+/* The scrolled background and blur live on this layer, not on .nav itself.
+   backdrop-filter on .nav would make it the containing block for the fixed
+   mobile menu, squashing the menu into the 68px bar once the page is scrolled. */
+.nav::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.nav--scrolled::before {
   background: rgba(10, 15, 30, 0.96);
+  -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
   box-shadow: 0 1px 0 rgba(255,255,255,0.06);
 }
